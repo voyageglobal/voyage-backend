@@ -1,0 +1,2 @@
+**/seeds/**/*.json filter=lfs diff=lfs merge=lfs -text
+**/seeds/**/*.json !text !filter !merge !diff
