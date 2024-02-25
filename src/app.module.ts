@@ -1,3 +1,4 @@
+import { CacheModule } from "@nestjs/cache-manager"
 import { Module } from "@nestjs/common"
 import { ConfigModule } from "@nestjs/config"
 import { AppController } from "./app.controller"
@@ -11,6 +12,7 @@ import { HealthCheckModule } from "./health-check/health-check.module"
       load: [loadEnvConfig],
     }),
     HealthCheckModule,
+    CacheModule.register(),
   ],
   controllers: [AppController],
   providers: [AppService],
