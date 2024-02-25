@@ -1,5 +1,5 @@
 import { CacheModule } from "@nestjs/cache-manager"
-import { Module } from "@nestjs/common"
+import { Logger, Module } from "@nestjs/common"
 import { ConfigModule } from "@nestjs/config"
 import { AppController } from "./app.controller"
 import { AppService } from "./app.service"
@@ -15,6 +15,6 @@ import { HealthCheckModule } from "./health-check/health-check.module"
     CacheModule.register(),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, Logger],
 })
 export class AppModule {}
