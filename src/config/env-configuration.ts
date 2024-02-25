@@ -2,7 +2,19 @@ import * as process from "process"
 
 export const DEFAULT_APP_PORT = 4000
 
-export function loadEnvConfig() {
+export type EnvVariables = {
+  app_port: number
+  db: {
+    host: string
+    port: number
+    name: string
+    username: string
+    password: string
+    url: string
+  }
+}
+
+export function loadEnvConfig(): EnvVariables {
   return {
     app_port: parseInt(process.env.APP_PORT, 10) || DEFAULT_APP_PORT,
     db: {
