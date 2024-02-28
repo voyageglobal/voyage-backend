@@ -7,5 +7,6 @@ import { GuidesController } from "./guides.controller"
   imports: [PrismaModule],
   controllers: [GuidesController],
   providers: [GuidesService],
+  exports: [GuidesService],
 })
 export class GuidesModule {}
