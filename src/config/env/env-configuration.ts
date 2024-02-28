@@ -27,7 +27,5 @@ export function getEnvironmentConfig(): EnvironmentConfig {
     },
   }
 
-  console.log("Config:", config)
-
   return config
 }

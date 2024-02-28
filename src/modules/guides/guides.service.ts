@@ -1,28 +1,43 @@
 import { Injectable } from "@nestjs/common"
+import { plainToClass } from "class-transformer"
+import { PrismaService } from "../prisma/prisma.service"
 import { CreateGuideDto } from "./dto/create-guide.dto"
+import { GuideDto } from "./dto/guide.dto"
 import { UpdateGuideDto } from "./dto/update-guide.dto"
 
 @Injectable()
 export class GuidesService {
-  constructor() {}
+  constructor(private readonly prismaService: PrismaService) {}
 
-  create(createGuideDto: CreateGuideDto) {
-    return "This action adds a new guide"
+  async create(createGuideDto: CreateGuideDto): Promise<GuideDto> {
+    const createdGuide = await this.prismaService.guide.create({ data: createGuideDto })
+
+    const createdGuideDto = plainToClass(GuideDto, createdGuide)
+
+    return createdGuideDto
   }
 
-  findAll() {
-    return `This action returns all guides`
+  async findOne(id: string): Promise<GuideDto> {
+    const guide = await this.prismaService.guide.findUnique({ where: { id } })
+
+    const guideDto = plainToClass(GuideDto, guide)
+
+    return guideDto
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} guide`
+  async update(id: string, updateGuideDto: UpdateGuideDto) {
+    const updatedGuide = this.prismaService.guide.update({ data: updateGuideDto, where: { id } })
+
+    const updatedGuideDto = plainToClass(GuideDto, updatedGuide)
+
+    return updatedGuideDto
   }
 
-  update(id: number, updateGuideDto: UpdateGuideDto) {
-    return `This action updates a #${id} guide`
-  }
+  async remove(id: string) {
+    const removedGuide = await this.prismaService.guide.delete({ where: { id } })
 
-  remove(id: number) {
-    return `This action removes a #${id} guide`
+    const removedGuideDto = plainToClass(GuideDto, removedGuide)
+
+    return removedGuideDto
   }
 }
