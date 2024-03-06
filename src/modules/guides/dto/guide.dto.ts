@@ -1,6 +1,7 @@
-import { Guide } from "../entities/guide"
+import { PartialType } from "@nestjs/swagger"
+import { Guide } from "../entities/guide.entity"
 
-export class GuideDto extends Guide {
+export class GuideDto extends PartialType(Guide) {
   id: string
 
   name: string
