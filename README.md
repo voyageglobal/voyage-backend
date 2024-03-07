@@ -61,3 +61,16 @@ $ npm run prisma:generate
 # Run the following command to migrate the database locally
 $ npm run prisma:migrate:dev
 ```
+
+## Tips
+
+```bash
+# To kill a process running on a port use the following command
+$ sudo npx kill-port 3000
+# OR on Mac
+$ sudo lsof -i tcp:3000
+$ sudo kill -9 PID
+# OR on Windows
+$ netstat -ano | findstr :3000
+$ tskill PID
+```
