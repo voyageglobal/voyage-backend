@@ -1,7 +1,10 @@
-import { Injectable } from "@nestjs/common"
+import { S3Client } from "@aws-sdk/client-s3"
+import { Upload } from "@aws-sdk/lib-storage"
+import { Injectable, Logger } from "@nestjs/common"
 import { ConfigService } from "@nestjs/config"
-import { S3Client, PutObjectCommand, PutObjectCommandOutput } from "@aws-sdk/client-s3"
 import { EnvironmentConfig } from "../../config/env/env-configuration"
+import { ImageUploadResult, PutObjectCommandOutputExtended } from "./types"
+import { toImageUploadErrorResult, toImageUploadSuccessResult } from "./utils"
 
 @Injectable()
 export class AwsS3Service {
@@ -13,47 +16,63 @@ export class AwsS3Service {
     },
   })
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly logger: Logger,
+  ) {}
 
-  async uploadFiles(files: Express.Multer.File[]): Promise<unknown> {
+  async uploadFiles(files: Express.Multer.File[]): Promise<ImageUploadResult[] | null> {
     const fileUploadPromises = files.map(file => {
       return this.uploadFileToS3(file)
     })
 
     try {
-      const results = await Promise.allSettled(fileUploadPromises)
+      this.logger.log("Uploading batch of files to S3")
+      const s3UploadResults = await Promise.allSettled(fileUploadPromises)
+      this.logger.log("Files have been uploaded to S3")
 
-      // TODO: return something meaningful
-      return null
+      const results = s3UploadResults.map(result => {
+        if (result.status === "fulfilled") {
+          return toImageUploadSuccessResult(result.value)
+        } else {
+          this.logger.error("Error while uploading files to S3", result.reason)
+          return toImageUploadErrorResult()
+        }
+      })
+
+      return results
     } catch (error) {
-      console.error(error)
+      this.logger.error("Error while uploading files to S3", error)
 
       return null
     }
   }
 
   private ImageUploadCommand(fileName: string, fileBody: Buffer, mimetype: string) {
-    return new PutObjectCommand({
-      Bucket: this.configService.get<EnvironmentConfig["awsS3"]>("awsS3").bucketName,
-      Key: fileName,
-      Body: fileBody,
-      ContentType: mimetype,
-      // NOTE: Not sure about correct value
-      ContentDisposition: `inline; filename=${fileName}`,
+    return new Upload({
+      client: this.s3Client,
+      params: {
+        Bucket: this.configService.get<EnvironmentConfig["awsS3"]>("awsS3").bucketName,
+        Key: fileName,
+        Body: fileBody,
+        ContentType: mimetype,
+        // NOTE: Not sure about correct value
+        ContentDisposition: `inline; filename=${fileName}`,
+      },
     })
   }
 
-  private async uploadFileToS3(file: Express.Multer.File): Promise<PutObjectCommandOutput> {
+  private async uploadFileToS3(file: Express.Multer.File): Promise<PutObjectCommandOutputExtended> {
     try {
       const imageUploadCommand = this.ImageUploadCommand(file.originalname, file.buffer, file.mimetype)
 
-      const response = await this.s3Client.send(imageUploadCommand)
+      this.logger.log(`Uploading file to S3 - "${file.originalname}"`)
+      const uploadResult = await imageUploadCommand.done()
+      this.logger.log(`File has been uploaded to S3 - ${file.originalname}`)
 
-      return response
+      return uploadResult as PutObjectCommandOutputExtended
     } catch (error) {
-      // TODO: handle error correctly
-      // TODO: log error
-      console.error(error)
+      this.logger.error(`Error while uploading file to S3 - ${file.originalname}`, error)
 
       return null
     }

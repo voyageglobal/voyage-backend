@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common"
+import { Logger, Module } from "@nestjs/common"
 import { AwsS3Module } from "../aws-s3/aws-s3.module"
 import { ImagesController } from "./images.controller"
 import { ImagesService } from "./images.service"
@@ -6,6 +6,6 @@ import { ImagesService } from "./images.service"
 @Module({
   imports: [AwsS3Module],
   controllers: [ImagesController],
-  providers: [ImagesService],
+  providers: [ImagesService, Logger],
 })
 export class ImagesModule {}
