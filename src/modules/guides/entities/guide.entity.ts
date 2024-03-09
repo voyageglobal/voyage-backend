@@ -29,7 +29,7 @@ export class Guide {
   text: string
 
   @ApiProperty({
-    type: String,
+    type: [String],
     description: "The primary images of the guide",
     example: "https://example.com/image.jpg",
     required: true,
@@ -37,7 +37,7 @@ export class Guide {
   primaryImages: Image[]
 
   @ApiProperty({
-    type: String,
+    type: [String],
     description: "The content images of the guide",
     example: "https://example.com/image.jpg",
     required: false,
