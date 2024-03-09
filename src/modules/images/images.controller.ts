@@ -6,11 +6,12 @@ import {
   ApiConsumes,
   ApiCreatedResponse,
   ApiOperation,
+  ApiPayloadTooLargeResponse,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger"
-import { MAX_FILES_PER_REQUEST } from "../common/constants"
+import { MAX_FILE_SIZE, MAX_FILES_PER_REQUEST } from "../common/constants"
 import { UploadImagesDto } from "./dto/upload-images.dto"
 import { UploadImagesResponse } from "./dto/upload-images.response"
 import { ImagesService } from "./images.service"
@@ -37,6 +38,9 @@ export class ImagesController {
   @ApiBadRequestResponse({
     description: "Bad request",
   })
+  @ApiPayloadTooLargeResponse({
+    description: "The payload is too large.",
+  })
   @ApiResponse({
     status: 500,
     description: "Internal",
@@ -57,7 +61,14 @@ export class ImagesController {
       },
     },
   })
-  @UseInterceptors(FilesInterceptor("file", MAX_FILES_PER_REQUEST))
+  @UseInterceptors(
+    FilesInterceptor("file", MAX_FILES_PER_REQUEST, {
+      limits: {
+        files: MAX_FILES_PER_REQUEST,
+        fileSize: MAX_FILE_SIZE,
+      },
+    }),
+  )
   async uploadImages(@UploadedFiles() files: Express.Multer.File[]): Promise<UploadImagesResponse> {
     const uploadImagesDto: UploadImagesDto = {
       files: files,
