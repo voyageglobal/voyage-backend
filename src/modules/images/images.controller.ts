@@ -1,4 +1,13 @@
-import { Controller, Logger, Post, UploadedFiles, UseInterceptors } from "@nestjs/common"
+import {
+  Controller,
+  FileTypeValidator,
+  Logger,
+  MaxFileSizeValidator,
+  ParseFilePipe,
+  Post,
+  UploadedFiles,
+  UseInterceptors,
+} from "@nestjs/common"
 import { FilesInterceptor } from "@nestjs/platform-express"
 import {
   ApiBadRequestResponse,
@@ -11,7 +20,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger"
-import { MAX_FILE_SIZE, MAX_FILES_PER_REQUEST } from "../common/constants"
+import { ALLOWED_IMAGE_EXTENSIONS_REGEX, MAX_FILE_SIZE, MAX_FILES_PER_REQUEST } from "../common/constants"
 import { UploadImagesDto } from "./dto/upload-images.dto"
 import { UploadImagesResponse } from "./dto/upload-images.response"
 import { ImagesService } from "./images.service"
@@ -69,7 +78,20 @@ export class ImagesController {
       },
     }),
   )
-  async uploadImages(@UploadedFiles() files: Express.Multer.File[]): Promise<UploadImagesResponse> {
+  async uploadImages(
+    @UploadedFiles(
+      new ParseFilePipe({
+        fileIsRequired: true,
+        validators: [
+          new MaxFileSizeValidator({ maxSize: MAX_FILE_SIZE, message: "File size is too large" }),
+          new FileTypeValidator({
+            fileType: ALLOWED_IMAGE_EXTENSIONS_REGEX,
+          }),
+        ],
+      }),
+    )
+    files: Express.Multer.File[],
+  ): Promise<UploadImagesResponse> {
     const uploadImagesDto: UploadImagesDto = {
       files: files,
     }
