@@ -37,7 +37,7 @@ jobs:
       - name: pull-request-action
         uses: vsoch/pull-request-action@1.1.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           PULL_REQUEST_BRANCH: "master"
           PULL_REQUEST_FROM_BRANCH: "staging"
           PULL_REQUEST_UPDATE: true
