@@ -1,5 +1,7 @@
-import { ConfigModule, ConfigService } from "@nestjs/config"
+import { ConfigService } from "@nestjs/config"
 import { Test, TestingModule } from "@nestjs/testing"
+import { MockedConfigService } from "../../test-utils/providers"
+import { MockedLogger } from "../../test-utils/providers"
 import { AwsS3Service } from "./aws-s3.service"
 
 describe("AwsS3Service", () => {
@@ -8,19 +10,7 @@ describe("AwsS3Service", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        AwsS3Service,
-        {
-          provide: ConfigService,
-          useValue: {
-            get: jest.fn(() => ({
-              region: "region",
-              accessKeyId: "accessKeyId",
-              secretAccessKey: "secretAccessKey",
-            })),
-          },
-        },
-      ],
+      providers: [AwsS3Service, MockedConfigService, MockedLogger],
     }).compile()
 
     service = module.get<AwsS3Service>(AwsS3Service)
