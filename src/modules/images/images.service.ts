@@ -7,6 +7,8 @@ export class ImagesService {
   constructor(private readonly awsS3Service: AwsS3Service) {}
 
   async upload(imagesDto: UploadImagesDto) {
-    return this.awsS3Service.uploadFiles(imagesDto.files)
+    const uploadedFiles = await this.awsS3Service.uploadFiles(imagesDto.files)
+
+    return uploadedFiles
   }
 }
