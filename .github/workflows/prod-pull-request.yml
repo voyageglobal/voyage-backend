@@ -1,7 +1,6 @@
 name: Prod pull request
 
-permissions:
-  pull-requests: write
+permissions: write-all
 
 on:
   push:
