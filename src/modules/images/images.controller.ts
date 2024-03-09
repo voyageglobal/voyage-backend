@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   FileTypeValidator,
   Logger,
   MaxFileSizeValidator,
@@ -14,9 +15,12 @@ import {
   ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
+  ApiParam,
   ApiPayloadTooLargeResponse,
-  ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger"
@@ -55,9 +59,8 @@ export class ImagesController {
   @ApiPayloadTooLargeResponse({
     description: "The payload is too large.",
   })
-  @ApiResponse({
-    status: 500,
-    description: "Internal",
+  @ApiInternalServerErrorResponse({
+    description: "Internal server error",
   })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
@@ -108,4 +111,24 @@ export class ImagesController {
       errors: null,
     }
   }
+
+  @Delete(":url")
+  @ApiOperation({ summary: "Remove an image by url" })
+  @ApiParam({ name: "url", type: String })
+  @ApiOkResponse({
+    description: "The image has been successfully removed.",
+  })
+  @ApiBadRequestResponse({
+    description: "Bad request",
+  })
+  @ApiUnauthorizedResponse({
+    description: "Unauthorized",
+  })
+  @ApiInternalServerErrorResponse({
+    description: "Internal server error",
+  })
+  @ApiNotFoundResponse({
+    description: "Image not found",
+  })
+  async removeImage() {}
 }
