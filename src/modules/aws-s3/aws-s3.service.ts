@@ -27,7 +27,7 @@ export class AwsS3Service {
     })
 
     try {
-      this.logger.log("Uploading batch of files to S3")
+      this.logger.log(`Uploading batch (${files.length}) of files to S3`)
       const s3UploadResults = await Promise.allSettled(fileUploadPromises)
       this.logger.log("Files have been uploaded to S3")
 
