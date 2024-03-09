@@ -35,7 +35,7 @@ jobs:
         run: echo "PULL_REQUEST_BODY=${{steps.generate-pr-body.outputs.result}}" >> $GITHUB_ENV
       
       - name: pull-request-action
-        uses: vsoch/pull-request-action@master
+        uses: vsoch/pull-request-action@1.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PULL_REQUEST_BRANCH: "master"
