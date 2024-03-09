@@ -1,7 +1,5 @@
 name: Prod pull request
 
-permissions: write-all
-
 on:
   push:
     branches-ignore:
