@@ -20,7 +20,12 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger"
-import { ALLOWED_IMAGE_EXTENSIONS_REGEX, MAX_FILE_SIZE, MAX_FILES_PER_REQUEST } from "../common/constants"
+import {
+  ALLOWED_IMAGE_EXTENSIONS,
+  ALLOWED_IMAGE_EXTENSIONS_REGEX,
+  MAX_FILE_SIZE,
+  MAX_FILES_PER_REQUEST,
+} from "../common/constants"
 import { UploadImagesDto } from "./dto/upload-images.dto"
 import { UploadImagesResponse } from "./dto/upload-images.response"
 import { ImagesService } from "./images.service"
@@ -56,7 +61,7 @@ export class ImagesController {
   })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
-    description: "List of images to upload",
+    description: `List of files to upload. Supported images formats: ${ALLOWED_IMAGE_EXTENSIONS.join(", ")}`,
     schema: {
       type: "object",
       properties: {
