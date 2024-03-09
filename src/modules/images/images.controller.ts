@@ -1,5 +1,5 @@
-import { Controller, Logger, Post, UploadedFile, UseInterceptors } from "@nestjs/common"
-import { FileInterceptor } from "@nestjs/platform-express"
+import { Controller, Logger, Post, UploadedFiles, UseInterceptors } from "@nestjs/common"
+import { FilesInterceptor } from "@nestjs/platform-express"
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -10,8 +10,9 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger"
-import { UploadImagesResponseDto } from "./dto/upload-images-response.dto"
+import { MAX_FILES_PER_REQUEST } from "../common/constants"
 import { UploadImagesDto } from "./dto/upload-images.dto"
+import { UploadImagesResponse } from "./dto/upload-images.response"
 import { ImagesService } from "./images.service"
 
 @ApiTags("images")
@@ -31,7 +32,7 @@ export class ImagesController {
   })
   @ApiCreatedResponse({
     description: "The images have been successfully uploaded.",
-    type: UploadImagesResponseDto,
+    type: UploadImagesResponse,
   })
   @ApiBadRequestResponse({
     description: "Bad request",
@@ -47,16 +48,19 @@ export class ImagesController {
       type: "object",
       properties: {
         file: {
-          type: "string",
-          format: "binary",
+          type: "array",
+          items: {
+            type: "string",
+            format: "binary",
+          },
         },
       },
     },
   })
-  @UseInterceptors(FileInterceptor("file"))
-  async uploadImages(@UploadedFile() file: Express.Multer.File): Promise<UploadImagesResponseDto> {
+  @UseInterceptors(FilesInterceptor("file", MAX_FILES_PER_REQUEST))
+  async uploadImages(@UploadedFiles() files: Express.Multer.File[]): Promise<UploadImagesResponse> {
     const uploadImagesDto: UploadImagesDto = {
-      files: [file],
+      files: files,
     }
 
     const result = await this.imagesService.upload(uploadImagesDto)
