@@ -4,6 +4,7 @@ import {
   FileTypeValidator,
   Logger,
   MaxFileSizeValidator,
+  Param,
   ParseFilePipe,
   Post,
   UploadedFiles,
@@ -30,8 +31,9 @@ import {
   MAX_FILE_SIZE,
   MAX_FILES_PER_REQUEST,
 } from "../common/constants"
+import { DeleteImageResponse } from "./dto/delete-image-response"
 import { UploadImagesDto } from "./dto/upload-images.dto"
-import { UploadImagesResponse } from "./dto/upload-images.response"
+import { UploadImagesResponse } from "./dto/upload-images-response"
 import { ImagesService } from "./images.service"
 
 @ApiTags("images")
@@ -117,6 +119,7 @@ export class ImagesController {
   @ApiParam({ name: "url", type: String })
   @ApiOkResponse({
     description: "The image has been successfully removed.",
+    type: DeleteImageResponse,
   })
   @ApiBadRequestResponse({
     description: "Bad request",
@@ -130,5 +133,12 @@ export class ImagesController {
   @ApiNotFoundResponse({
     description: "Image not found",
   })
-  async removeImage() {}
+  async deleteImage(@Param("url") url: string): Promise<DeleteImageResponse> {
+    const results = await this.imagesService.delete([url])
+
+    return {
+      data: results,
+      errors: null,
+    }
+  }
 }
