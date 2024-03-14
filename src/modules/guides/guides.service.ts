@@ -35,7 +35,7 @@ export class GuidesService {
   }
 
   async findOne(id: string): Promise<GuideDto> {
-    const guide = await this.prismaService.guide.findUnique({ where: { id } })
+    const guide = await this.prismaService.guide.findUnique({ where: { id, deleted: false } })
 
     const guideDto = plainToClass(GuideDto, guide)
 
@@ -55,6 +55,9 @@ export class GuidesService {
           contentImages: true,
         },
         take: limit,
+        where: {
+          deleted: false,
+        },
       })
 
       const guidesDto = plainToInstance(GuideDto, guides)
