@@ -21,16 +21,19 @@ export class GuidesService {
         data: {
           name: createGuideDto.name,
           text: createGuideDto.text,
-          // primaryImages: {
-          //   create: createGuideDto.primaryImages,
-          // },
+          primaryImages: {
+            create: createGuideDto.primaryImages,
+          },
           // contentImages: {
           //   create: createGuideDto.contentImages,
           // },
         },
+        include: {
+          primaryImages: true,
+        },
       })
 
-      const createdGuideDto = plainToClass(GuideDto, createdGuide)
+      const createdGuideDto = plainToInstance(GuideDto, createdGuide)
 
       return createdGuideDto
     } catch (error) {
@@ -63,7 +66,7 @@ export class GuidesService {
       const guides = await this.prismaService.guide.findMany({
         include: {
           primaryImages: true,
-          contentImages: true,
+          // contentImages: true,
         },
         take: limit,
         where: {

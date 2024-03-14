@@ -24,10 +24,7 @@ import { GuidesService } from "./guides.service"
 @ApiTags("guides")
 @Controller("guides")
 export class GuidesController {
-  constructor(
-    private readonly logger: Logger,
-    private readonly guidesService: GuidesService,
-  ) {}
+  constructor(private readonly guidesService: GuidesService) {}
 
   @Post()
   @ApiOperation({ summary: "Create a new guide" })
@@ -44,7 +41,7 @@ export class GuidesController {
   @ApiInternalServerErrorResponse({
     description: "Internal server error",
   })
-  @ApiBody({ type: CreateGuideDto })
+  @ApiBody({ type: CreateGuideDto, required: true, description: "The guide to create" })
   async create(@Body() createGuideDto: CreateGuideDto): Promise<CreateGuideResponseDto> {
     try {
       const creationResult = await this.guidesService.create(createGuideDto)
@@ -54,8 +51,6 @@ export class GuidesController {
         errors: null,
       }
     } catch (error) {
-      this.logger.error("Error creating guide", { error })
-
       return {
         data: null,
         errors: [new Error("Error creating guide")],

@@ -106,11 +106,20 @@ export class ImagesController {
       files: files,
     }
 
-    const result = await this.imagesService.upload(uploadImagesDto)
+    try {
+      const result = await this.imagesService.upload(uploadImagesDto)
 
-    return {
-      data: result,
-      errors: null,
+      return {
+        data: result,
+        errors: null,
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        return {
+          data: null,
+          errors: [error],
+        }
+      }
     }
   }
 
