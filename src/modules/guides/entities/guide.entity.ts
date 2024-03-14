@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
+import { Type } from "class-transformer"
 import { IsBoolean, IsDate, IsString, IsUUID } from "class-validator"
 import { City } from "./city"
 import { Country } from "./country"
@@ -33,11 +34,19 @@ export class Guide {
   text: string
 
   @ApiProperty({
-    type: [String],
+    type: [Image],
     description: "The primary images of the guide",
-    example: ["https://example.com/image.jpg"],
+    example: [
+      {
+        url: "https://example.com/image.jpg",
+        type: "jpg",
+        alt: "Eiffel Tower",
+      },
+    ],
     required: true,
+    minItems: 1,
   })
+  @Type(() => Image)
   primaryImages: Image[]
 
   @ApiProperty({
@@ -46,6 +55,7 @@ export class Guide {
     example: ["https://example.com/image.jpg"],
     required: false,
   })
+  @Type(() => Image)
   contentImages: Image[]
 
   @ApiProperty({
@@ -54,6 +64,7 @@ export class Guide {
     example: ["France"],
     required: true,
   })
+  @Type(() => Country)
   countries: Country[]
 
   @ApiProperty({
@@ -62,6 +73,7 @@ export class Guide {
     example: ["Paris"],
     required: true,
   })
+  @Type(() => City)
   cities: City[]
 
   @ApiProperty({

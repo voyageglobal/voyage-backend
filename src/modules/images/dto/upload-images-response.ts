@@ -1,10 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { FileUploadResult } from "../../aws-s3/types"
 import { ApiResponse } from "../../common/types"
+import { ImageDto } from "./image.dto"
 
-export class UploadImagesResponse implements ApiResponse<FileUploadResult[]> {
+export class UploadImagesResponse implements ApiResponse<ImageDto[]> {
   @ApiProperty({
-    type: [FileUploadResult],
+    type: [ImageDto],
     description: "The uploaded images",
     example: [
       {
@@ -15,7 +15,7 @@ export class UploadImagesResponse implements ApiResponse<FileUploadResult[]> {
     ],
     required: true,
   })
-  data: FileUploadResult[]
+  data: ImageDto[]
 
   @ApiProperty({
     type: [Error],
