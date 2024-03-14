@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
+import { IsBoolean, IsDate, IsString, IsUUID } from "class-validator"
 import { City } from "./city"
 import { Country } from "./country"
 import { Image } from "./image"
@@ -10,6 +11,7 @@ export class Guide {
     example: "c7912662-26ea-435c-a1f7-66f52d1440ff",
     required: true,
   })
+  @IsUUID(4, { message: "Invalid UUID" })
   id: string
 
   @ApiProperty({
@@ -18,6 +20,7 @@ export class Guide {
     example: "Travel Guide to Paris",
     required: true,
   })
+  @IsString()
   name: string
 
   @ApiProperty({
@@ -26,6 +29,7 @@ export class Guide {
     example: "Paris is the capital city of France",
     required: true,
   })
+  @IsString()
   text: string
 
   @ApiProperty({
@@ -65,6 +69,7 @@ export class Guide {
     description: "The date the guide was created",
     example: "2021-08-01T00:00:00.000Z",
   })
+  @IsDate()
   createdAt: Date
 
   @ApiProperty({
@@ -72,6 +77,7 @@ export class Guide {
     description: "The date the guide was last updated",
     example: "2021-08-01T00:00:00.000Z",
   })
+  @IsDate()
   updatedAt: Date
 
   @ApiProperty({
@@ -80,5 +86,6 @@ export class Guide {
     example: false,
     default: false,
   })
+  @IsBoolean()
   deleted: boolean
 }
