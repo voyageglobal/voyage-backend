@@ -16,22 +16,33 @@ export class GuidesService {
   ) {}
 
   async create(createGuideDto: CreateGuideDto): Promise<GuideDto> {
-    const createdGuide = await this.prismaService.guide.create({
-      data: {
-        name: createGuideDto.name,
-        text: createGuideDto.text,
-        // primaryImages: {
-        //   create: createGuideDto.primaryImages,
-        // },
-        // contentImages: {
-        //   create: createGuideDto.contentImages,
-        // },
-      },
-    })
+    try {
+      const createdGuide = await this.prismaService.guide.create({
+        data: {
+          name: createGuideDto.name,
+          text: createGuideDto.text,
+          // primaryImages: {
+          //   create: createGuideDto.primaryImages,
+          // },
+          // contentImages: {
+          //   create: createGuideDto.contentImages,
+          // },
+        },
+      })
 
-    const createdGuideDto = plainToClass(GuideDto, createdGuide)
+      const createdGuideDto = plainToClass(GuideDto, createdGuide)
 
-    return createdGuideDto
+      return createdGuideDto
+    } catch (error) {
+      if (error instanceof Error) {
+        this.logger.error(`Error creating guide: ${error.message}`)
+
+        throw error
+      }
+
+      this.logger.error("Unexpected error creating guide")
+      throw error
+    }
   }
 
   async findOne(id: string): Promise<GuideDto> {
@@ -64,10 +75,13 @@ export class GuidesService {
 
       return guidesDto
     } catch (error) {
-      console.error(error)
-      // TODO: Implement correct handling of DB errors
-      this.logger.error("Error fetching guides", { error })
+      if (error instanceof Error) {
+        this.logger.error(`Error fetching guides: ${error.message}`)
 
+        throw error
+      }
+
+      this.logger.error("Unexpected error fetching guides")
       throw error
     }
   }

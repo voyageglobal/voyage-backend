@@ -43,5 +43,27 @@ describe("GuidesController", () => {
 
       expect(createResult).toEqual(result)
     })
+
+    it("should handle bad input data", async () => {
+      const createGuideDto: CreateGuideDto = plainToInstance(CreateGuideDto, {
+        name: "",
+        text: "",
+      })
+
+      const errorResult = await controller.create(createGuideDto)
+
+      expect(errorResult.errors).toHaveLength(1)
+    })
+
+    it("should handle guide creation error", async () => {
+      const guideMock = getGuideMock()
+      const createGuideDto: CreateGuideDto = plainToInstance(CreateGuideDto, guideMock)
+      const expectedError = new Error("Test error")
+      jest.spyOn(guidesService, "create").mockRejectedValueOnce(expectedError)
+
+      const errorResult = await controller.create(createGuideDto)
+
+      expect(errorResult.errors).toHaveLength(1)
+    })
   })
 })
