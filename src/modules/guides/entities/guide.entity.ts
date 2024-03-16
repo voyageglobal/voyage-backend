@@ -52,7 +52,13 @@ export class Guide {
   @ApiProperty({
     type: [String],
     description: "The content images of the guide",
-    example: ["https://example.com/image.jpg"],
+    example: [
+      {
+        url: "https://example.com/image.jpg",
+        type: "jpg",
+        alt: "Eiffel Tower",
+      },
+    ],
     required: false,
   })
   @Type(() => Image)

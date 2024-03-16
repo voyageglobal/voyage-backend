@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Logger, Param, Patch, Post, Query, ValidationPipe } from "@nestjs/common"
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, ValidationPipe } from "@nestjs/common"
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -51,9 +51,28 @@ export class GuidesController {
         errors: null,
       }
     } catch (error) {
+      if (error instanceof Error) {
+        return {
+          data: null,
+          errors: [
+            {
+              message: error.message,
+              name: error.name,
+              stack: error.stack,
+            },
+          ],
+        }
+      }
+
       return {
         data: null,
-        errors: [new Error("Error creating guide")],
+        errors: [
+          {
+            message: "Unexpected error creating guide",
+            name: "UnexpectedError",
+            stack: null,
+          },
+        ],
       }
     }
   }

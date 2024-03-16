@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common"
+import { Prisma } from "@prisma/client"
 import { plainToClass, plainToInstance } from "class-transformer"
-import { DEFAULT_PAGE, MAX_PAGE_SIZE } from "../common/constants"
+import { DEFAULT_PAGE, MAX_PAGE_SIZE, PRISMA_ERROR_CODES } from "../common/constants"
 import { PaginationQuery } from "../common/types"
 import { PrismaService } from "../prisma/prisma.service"
 import { DEFAULT_GUIDES_PAGE_SIZE } from "./constants"
@@ -24,12 +25,13 @@ export class GuidesService {
           primaryImages: {
             create: createGuideDto.primaryImages,
           },
-          // contentImages: {
-          //   create: createGuideDto.contentImages,
-          // },
+          contentImages: {
+            create: createGuideDto.contentImages,
+          },
         },
         include: {
           primaryImages: true,
+          contentImages: true,
         },
       })
 
@@ -37,7 +39,15 @@ export class GuidesService {
 
       return createdGuideDto
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === PRISMA_ERROR_CODES.UNIQUE_CONSTRAINT) {
+          this.logger.error(`Error creating guide: model - ${error.meta?.modelName}, target - ${error.meta?.target}`)
+          throw new Error("Guide with this name already exists")
+        }
+      }
+
       if (error instanceof Error) {
+        console.error("CreateGuide", error.toString())
         this.logger.error(`Error creating guide: ${error.message}`)
 
         throw error
