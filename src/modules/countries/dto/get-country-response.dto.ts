@@ -8,7 +8,7 @@ export class GetCountryResponseDto implements ApiResponse<CountryDto> {
     description: "Country",
     required: true,
     example: {
-      id: "1",
+      id: "c7912662-26ea-435c-a1f7-66f52d1440ff",
       name: "Ukraine",
       description: "Ukraine is a country in Eastern Europe.",
       cities: [],
