@@ -26,6 +26,9 @@ export class CountriesService {
         where: {
           deleted: false,
         },
+        include: {
+          images: true,
+        },
       })
 
       const countriesDtos = plainToInstance(CountryDto, results)
