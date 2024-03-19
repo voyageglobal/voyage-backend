@@ -28,10 +28,26 @@ export class GuidesService {
           contentImages: {
             create: createGuideDto.contentImages,
           },
+          countries: {
+            connect: createGuideDto.countries.map(countryId => {
+              return {
+                id: countryId,
+              }
+            }),
+          },
+          cities: {
+            connect: createGuideDto.cities.map(cityId => {
+              return {
+                id: cityId,
+              }
+            }),
+          },
         },
         include: {
           primaryImages: true,
           contentImages: true,
+          cities: true,
+          countries: true,
         },
       })
 
@@ -79,6 +95,7 @@ export class GuidesService {
           // contentImages: true,
         },
         take: limit,
+        skip: (page - 1) * limit,
         where: {
           deleted: false,
         },
@@ -106,7 +123,7 @@ export class GuidesService {
         name: updateGuideDto.name,
         text: updateGuideDto.text,
       },
-      where: { id },
+      where: { id, deleted: false },
     })
 
     const updatedGuideDto = plainToClass(GuideDto, updatedGuide)

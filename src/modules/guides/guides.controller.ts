@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, ValidationPipe } from "@nestjs/common"
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+  Query,
+  ValidationPipe,
+} from "@nestjs/common"
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -28,12 +39,12 @@ export class GuidesController {
 
   @Post()
   @ApiOperation({ summary: "Create a new guide" })
-  @ApiUnauthorizedResponse({
-    description: "Unauthorized",
-  })
   @ApiCreatedResponse({
     description: "The guide has been successfully created.",
-    type: GuideDto,
+    type: CreateGuideResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: "Unauthorized",
   })
   @ApiBadRequestResponse({
     description: "Bad request",
@@ -113,14 +124,26 @@ export class GuidesController {
       if (error instanceof Error) {
         return {
           data: null,
-          errors: [error],
+          errors: [
+            {
+              message: error.message,
+              name: error.name,
+              stack: error.stack,
+            },
+          ],
         }
       }
     }
   }
 
   @Get(":id")
-  @ApiParam({ name: "id", type: String, example: "9a55ee15-d3b6-464f-85b8-755d314b33c1" })
+  @ApiParam({
+    name: "id",
+    type: String,
+    required: true,
+    example: "9a55ee15-d3b6-464f-85b8-755d314b33c1",
+    description: "Guide id",
+  })
   @ApiOperation({ summary: "Get a guide by id" })
   @ApiOkResponse({
     type: GuideDto,
@@ -139,15 +162,29 @@ export class GuidesController {
     try {
       const result = await this.guidesService.findOne(id)
 
+      if (!result) {
+        throw new NotFoundException()
+      }
+
       return {
         data: result,
         errors: null,
       }
     } catch (error) {
       if (error instanceof Error) {
+        if (error instanceof NotFoundException) {
+          throw error
+        }
+
         return {
           data: null,
-          errors: [error],
+          errors: [
+            {
+              message: error.message,
+              name: error.name,
+              stack: error.stack,
+            },
+          ],
         }
       }
     }
