@@ -117,7 +117,13 @@ export class ImagesController {
       if (error instanceof Error) {
         return {
           data: null,
-          errors: [error],
+          errors: [
+            {
+              message: error.message,
+              name: error.name,
+              stack: error.stack,
+            },
+          ],
         }
       }
     }

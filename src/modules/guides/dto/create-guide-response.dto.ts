@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { ApiResponse } from "../../common/types"
+import { ApiResponse, ApiError } from "../../common/types"
 import { GuideDto } from "./guide.dto"
 
 export class CreateGuideResponseDto implements ApiResponse<GuideDto> {
@@ -11,10 +11,16 @@ export class CreateGuideResponseDto implements ApiResponse<GuideDto> {
   data: GuideDto
 
   @ApiProperty({
-    type: Error,
+    type: [ApiError],
     description: "The error messages",
-    example: ["Name is required"],
+    example: [
+      {
+        message: "Guide name is required",
+        name: "ValidationError",
+        stack: `Error: Guide name is required\n    at Object.<anonymous> (/app/src/modules/guides/guides.controller.ts:40:15)`,
+      },
+    ],
     required: false,
   })
-  errors: Error[] | null
+  errors: ApiError[] | null
 }

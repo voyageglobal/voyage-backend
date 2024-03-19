@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { ApiResponse } from "../../common/types"
+import { ApiError, ApiResponse } from "../../common/types"
 import { ImageDto } from "./image.dto"
 
 export class UploadImagesResponse implements ApiResponse<ImageDto[]> {
@@ -18,14 +18,16 @@ export class UploadImagesResponse implements ApiResponse<ImageDto[]> {
   data: ImageDto[]
 
   @ApiProperty({
-    type: [Error],
+    type: [ApiError],
     description: "The errors",
     example: [
       {
-        message: "The file is too large",
+        message: "File is too large",
+        name: "ValidationError",
+        stack: `Error: File is too large\n    at Object.<anonymous> (/app/src/modules/images/images.controller.ts:40:15)`,
       },
     ],
     required: false,
   })
-  errors: Error[] | null
+  errors: ApiError[] | null
 }
