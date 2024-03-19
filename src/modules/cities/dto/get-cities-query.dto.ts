@@ -2,7 +2,7 @@ import { Type } from "class-transformer"
 import { IsInt } from "class-validator"
 import { PaginationQuery } from "../../common/types"
 
-export class GetCountriesQueryDto implements PaginationQuery {
+export class GetCitiesQueryDto implements PaginationQuery {
   @IsInt()
   @Type(() => Number)
   page: number

@@ -74,12 +74,23 @@ export class GuidesService {
     }
   }
 
-  async findOne(id: string): Promise<GuideDto> {
-    const guide = await this.prismaService.guide.findUnique({ where: { id, deleted: false } })
+  async findOne(id: string): Promise<GuideDto | null> {
+    try {
+      const guide = await this.prismaService.guide.findUnique({ where: { id, deleted: false } })
 
-    const guideDto = plainToClass(GuideDto, guide)
+      const guideDto = plainToInstance(GuideDto, guide)
 
-    return guideDto
+      return guideDto
+    } catch (error) {
+      if (error instanceof Error) {
+        this.logger.error(`Error fetching guide: ${error.message}`)
+
+        throw error
+      }
+
+      this.logger.error("Unexpected error fetching guide")
+      throw error
+    }
   }
 
   async findAll(query: PaginationQuery): Promise<GuideDto[]> {
@@ -92,7 +103,7 @@ export class GuidesService {
       const guides = await this.prismaService.guide.findMany({
         include: {
           primaryImages: true,
-          // contentImages: true,
+          contentImages: true,
         },
         take: limit,
         skip: (page - 1) * limit,
