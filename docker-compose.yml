@@ -38,6 +38,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: adadychanka/voyage
     container_name: voyage-server
     restart: always
     env_file:
