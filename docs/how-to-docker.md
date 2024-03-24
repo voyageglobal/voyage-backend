@@ -48,6 +48,8 @@ $ docker rmi <CONTAINER_ID>
 To clean up the docker system, run the following command:
 ```bash
 $ docker system prune
+# With volumes
+$ docker system prune -a --volumes
 ```
 
 ---
