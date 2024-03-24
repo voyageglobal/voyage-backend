@@ -63,3 +63,15 @@ To run the docker-compose, run the following command:
 ```bash
 $ docker-compose up -d
 ```
+
+To stop the docker-compose , run the following command:
+```bash
+$ docker-compose stop
+```
+
+To stop the docker-compose and remove the containers, run the following command:
+```bash
+$ docker-compose down
+# OR to remove the volumes
+$ docker-compose down -v
+```
