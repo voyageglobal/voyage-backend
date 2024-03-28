@@ -28,8 +28,6 @@ export function getGuideDtoMock(overrides: Partial<GuideDto> = {}): GuideDto {
     contentImages: [],
     cities: [],
     countries: [],
-    updatedAt: new Date("2021-01-01T00:00:00Z"),
-    createdAt: new Date("2021-01-01T00:00:00Z"),
     ...overrides,
   }
 }

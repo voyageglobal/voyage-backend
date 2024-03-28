@@ -3,8 +3,8 @@ import { GuideCategory } from "../../modules/guide-categories/entities/guide-cat
 
 export function getGuideCategoryMock(overrides: Partial<GuideCategory> = {}): GuideCategory {
   return {
-    key: "explore-city",
-    name: "Explore City",
+    key: "nature",
+    name: "Nature",
     imageUrl: "https://example.com/explore-city.png",
     guides: [],
     deleted: false,
@@ -16,8 +16,8 @@ export function getGuideCategoryMock(overrides: Partial<GuideCategory> = {}): Gu
 
 export function getGuideCategoryDtoMock(overrides: Partial<GuideCategoryDto> = {}): GuideCategoryDto {
   return {
-    key: "explore-city",
-    name: "Explore City",
+    key: "nature",
+    name: "Nature",
     imageUrl: "https://example.com/explore-city.png",
     ...overrides,
   }
