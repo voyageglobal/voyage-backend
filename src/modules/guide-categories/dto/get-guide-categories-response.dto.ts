@@ -9,12 +9,14 @@ export class GetGuideCategoriesResponseDto implements ApiResponse<GuideCategoryD
     required: true,
     example: [
       {
-        key: "c7912662-26ea-435c-a1f7-66f52d1440ff",
-        name: "City Guide",
-        imageUrl: "https://example.com/city-guide.png",
-        deleted: false,
-        createdAt: "2021-08-24T06:00:00.000Z",
-        updatedAt: "2021-08-24T06:00:00.000Z",
+        key: "nature",
+        name: "Nature",
+        imageUrl: "https://example.com/nature.jpg",
+      },
+      {
+        key: "sightseeing",
+        name: "Sightseeing",
+        imageUrl: "https://example.com/sightseeing.jpg",
       },
     ],
   })

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing"
 import { getGuideCategoryDtoMock, getGuideCategoryMock } from "../../test-utils/mocks/guide-category"
-import { prismaMock, PrismaClientMock } from "../../test-utils/prisma/prisma-instance-mock"
+import { prismaMock, PrismaClientMock } from "../../test-utils/prisma"
 import { MockedLogger } from "../../test-utils/providers"
 import { PrismaService } from "../prisma/prisma.service"
 import { GuideCategoriesService } from "./guide-categories.service"
@@ -46,8 +46,8 @@ describe("GuideCategoriesService", () => {
     })
 
     it("should return an array containing 1 guide category", async () => {
-      const guideCategoryMock = getGuideCategoryMock()
-      const guideCategoryDtoMock = getGuideCategoryDtoMock({ ...guideCategoryMock })
+      const guideCategoryMock = getGuideCategoryMock({ key: "nature", guides: undefined })
+      const guideCategoryDtoMock = getGuideCategoryDtoMock({ key: "nature" })
       prisma.guideCategory.findMany.mockResolvedValueOnce([guideCategoryMock])
 
       const guideCategories = await service.findAll()

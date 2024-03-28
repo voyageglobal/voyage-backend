@@ -1,5 +1,5 @@
 import { ApiProperty, PickType } from "@nestjs/swagger"
-import { Type } from "class-transformer"
+import { Exclude, Type } from "class-transformer"
 import { Country } from "../../guides/entities/country"
 import { Image } from "../../images/entities/image.entity"
 import { City } from "../entities/city.entity"
@@ -58,4 +58,31 @@ export class CityDto extends PickType(City, ["id", "name", "description", "count
   })
   @Type(() => Image)
   images: Image[]
+
+  @ApiProperty({
+    type: Boolean,
+    description: "The deleted status of the city",
+    example: false,
+    required: true,
+  })
+  @Exclude()
+  deleted?: boolean
+
+  @ApiProperty({
+    type: Date,
+    description: "The creation date of the city",
+    example: "2021-09-28T00:00:00.000Z",
+    required: true,
+  })
+  @Exclude()
+  createdAt?: Date
+
+  @ApiProperty({
+    type: Date,
+    description: "The update date of the city",
+    example: "2021-09-28T00:00:00.000Z",
+    required: true,
+  })
+  @Exclude()
+  updatedAt?: Date
 }

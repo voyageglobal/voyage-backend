@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing"
 import { getCityMock } from "../../test-utils/mocks/city"
 import { getCountryMock } from "../../test-utils/mocks/country"
 import { getGuideCategoryMock } from "../../test-utils/mocks/guide-category"
-import { getGuideMock } from "../../test-utils/mocks/guide"
+import { getGuideDtoMock, getGuideMock } from "../../test-utils/mocks/guide"
 import { getImageMock } from "../../test-utils/mocks/image"
 import { PrismaClientMock, prismaMock } from "../../test-utils/prisma"
 import { MockedLogger } from "../../test-utils/providers"
@@ -74,11 +74,11 @@ describe("GuidesService", () => {
       const guideMock = getGuideMock({
         id: "1",
       })
-      const guideDtoMock = getGuideMock({ ...guideMock })
+      const guideDtoMock = getGuideDtoMock({ id: "1" })
       const guideMock2 = getGuideMock({
         id: "2",
       })
-      const guideDtoMock2 = getGuideMock({ ...guideMock2 })
+      const guideDtoMock2 = getGuideDtoMock({ id: "2" })
       const paginationQuery: PaginationQuery = {
         pageSize: 2,
         page: 1,
@@ -96,7 +96,7 @@ describe("GuidesService", () => {
         id: "1",
         categories: [guideCategoryMock],
       })
-      const guideDtoMock = getGuideMock({ ...guideMock })
+      const guideDtoMock = getGuideDtoMock({ id: "1", categories: [guideCategoryMock] })
       const paginationQuery: PaginationQuery = {
         pageSize: 1,
         page: 1,
@@ -115,7 +115,7 @@ describe("GuidesService", () => {
         id: "1",
         primaryImages: [imageMock],
       })
-      const guideDtoMock = getGuideMock({ ...guideMock })
+      const guideDtoMock = getGuideDtoMock({ id: "1", primaryImages: [imageMock] })
       const paginationQuery: PaginationQuery = {
         pageSize: 1,
         page: 1,
@@ -134,7 +134,7 @@ describe("GuidesService", () => {
         id: "1",
         contentImages: [imageMock],
       })
-      const guideDtoMock = getGuideMock({ ...guideMock })
+      const guideDtoMock = getGuideDtoMock({ id: "1", contentImages: [imageMock] })
       const paginationQuery: PaginationQuery = {
         pageSize: 1,
         page: 1,
@@ -152,7 +152,7 @@ describe("GuidesService", () => {
         id: "1",
         countries: [getCountryMock()],
       })
-      const guideDtoMock = getGuideMock({ ...guideMock })
+      const guideDtoMock = getGuideDtoMock({ id: "1", countries: [getCountryMock()] })
       const paginationQuery: PaginationQuery = {
         pageSize: 1,
         page: 1,
@@ -170,7 +170,7 @@ describe("GuidesService", () => {
         id: "1",
         cities: [getCityMock()],
       })
-      const guideDtoMock = getGuideMock({ ...guideMock })
+      const guideDtoMock = getGuideDtoMock({ id: "1", cities: [getCityMock()] })
       const paginationQuery: PaginationQuery = {
         pageSize: 1,
         page: 1,
