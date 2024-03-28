@@ -1,5 +1,5 @@
 import { ApiProperty, PickType } from "@nestjs/swagger"
-import { Exclude, Type } from "class-transformer"
+import { Type } from "class-transformer"
 import { Country } from "../../guides/entities/country"
 import { Image } from "../../images/entities/image.entity"
 import { City } from "../entities/city.entity"
@@ -20,7 +20,6 @@ export class CityDto extends PickType(City, ["id", "name", "description", "count
     type: String,
     description: "The description of the city",
     example: "Paris is the capital city of France",
-    required: true,
   })
   description: string
 
@@ -59,7 +58,4 @@ export class CityDto extends PickType(City, ["id", "name", "description", "count
   })
   @Type(() => Image)
   images: Image[]
-
-  @Exclude()
-  deleted: boolean
 }

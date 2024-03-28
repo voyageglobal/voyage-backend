@@ -1,12 +1,22 @@
 import { ApiProperty, PickType } from "@nestjs/swagger"
-import { Exclude, Type } from "class-transformer"
-import { IsBoolean, IsDate, IsString, IsUUID } from "class-validator"
+import { Type } from "class-transformer"
+import { IsDate, IsString, IsUUID } from "class-validator"
 import { Image } from "../../images/entities/image.entity"
 import { City } from "../entities/city"
 import { Country } from "../entities/country"
+import { GuideCategory } from "../entities/guide-category"
 import { Guide } from "../entities/guide.entity"
 
-export class GuideDto extends PickType(Guide, ["id", "name", "text"] as const) {
+export class GuideDto extends PickType(Guide, [
+  "id",
+  "name",
+  "text",
+  "categories",
+  "primaryImages",
+  "contentImages",
+  "cities",
+  "countries",
+] as const) {
   @ApiProperty({
     type: String,
     description: "The id of the guide",
@@ -33,6 +43,20 @@ export class GuideDto extends PickType(Guide, ["id", "name", "text"] as const) {
   })
   @IsString()
   text: string
+
+  @ApiProperty({
+    type: [GuideCategory],
+    description: "The categories of the guide",
+    example: [
+      {
+        key: "sightseeing",
+        name: "Sightseeing",
+        imageUrl: "https://example.com/image.jpg",
+      },
+    ],
+  })
+  @Type(() => GuideCategory)
+  categories: GuideCategory[]
 
   @ApiProperty({
     type: [Image],
@@ -98,14 +122,4 @@ export class GuideDto extends PickType(Guide, ["id", "name", "text"] as const) {
   })
   @IsDate()
   updatedAt: Date
-
-  @ApiProperty({
-    type: Boolean,
-    description: "Whether the guide has been deleted",
-    example: false,
-    default: false,
-  })
-  @IsBoolean()
-  @Exclude()
-  deleted: boolean
 }

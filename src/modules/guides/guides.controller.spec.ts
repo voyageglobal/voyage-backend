@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing"
 import { plainToInstance } from "class-transformer"
-import { getGuideDtoMock } from "../../test-utils/mocks/guides"
+import { getGuideDtoMock } from "../../test-utils/mocks/guide"
 import { MockedLogger } from "../../test-utils/providers"
 import { PrismaModule } from "../prisma/prisma.module"
 import { CreateGuideResponseDto } from "./dto/create-guide-response.dto"

@@ -36,7 +36,7 @@ describe("GuideCategoriesService", () => {
 
     it("should throw an error", async () => {
       const error = new Error("Test error")
-      prismaMock.guideCategory.findMany.mockRejectedValueOnce(error)
+      prisma.guideCategory.findMany.mockRejectedValueOnce(error)
 
       try {
         await service.findAll()
@@ -48,7 +48,7 @@ describe("GuideCategoriesService", () => {
     it("should return an array containing 1 guide category", async () => {
       const guideCategoryMock = getGuideCategoryMock()
       const guideCategoryDtoMock = getGuideCategoryDtoMock({ ...guideCategoryMock })
-      prismaMock.guideCategory.findMany.mockResolvedValueOnce([guideCategoryMock])
+      prisma.guideCategory.findMany.mockResolvedValueOnce([guideCategoryMock])
 
       const guideCategories = await service.findAll()
 
