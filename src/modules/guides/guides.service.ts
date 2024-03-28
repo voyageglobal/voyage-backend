@@ -24,9 +24,13 @@ export class GuidesService {
           name: createGuideDto.name,
           text: createGuideDto.text,
           primaryImages: {
+            // TODO: possibly replace on connect due to the fact the image upload should create an image record
+            // or connectAndCreate at least
             create: createGuideDto.primaryImages,
           },
           contentImages: {
+            // TODO: possibly replace on connect due to the fact the image upload should create an image record
+            // or connectAndCreate at least
             create: createGuideDto?.contentImages,
           },
           countries: {
@@ -40,6 +44,13 @@ export class GuidesService {
             connect: createGuideDto.cities.map(cityId => {
               return {
                 id: cityId,
+              }
+            }),
+          },
+          categories: {
+            connect: createGuideDto.categories.map(categoryKey => {
+              return {
+                key: categoryKey,
               }
             }),
           },

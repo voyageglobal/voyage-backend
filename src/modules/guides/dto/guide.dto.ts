@@ -1,5 +1,5 @@
 import { ApiProperty, PickType } from "@nestjs/swagger"
-import { Type } from "class-transformer"
+import { Type, Exclude } from "class-transformer"
 import { IsDate, IsString, IsUUID } from "class-validator"
 import { Image } from "../../images/entities/image.entity"
 import { City } from "../entities/city"
@@ -113,7 +113,8 @@ export class GuideDto extends PickType(Guide, [
     example: "2021-08-01T00:00:00.000Z",
   })
   @IsDate()
-  createdAt: Date
+  @Exclude()
+  createdAt?: Date
 
   @ApiProperty({
     type: Date,
@@ -121,5 +122,9 @@ export class GuideDto extends PickType(Guide, [
     example: "2021-08-01T00:00:00.000Z",
   })
   @IsDate()
-  updatedAt: Date
+  @Exclude()
+  updatedAt?: Date
+
+  @Exclude()
+  deleted?: boolean
 }
