@@ -65,7 +65,6 @@ export class GuidesService {
       }
 
       if (error instanceof Error) {
-        console.error("CreateGuide", error.toString())
         this.logger.error(`Error creating guide: ${error.message}`)
 
         throw error
