@@ -3,6 +3,7 @@ import { IsBoolean, IsDate, IsString, IsUUID } from "class-validator"
 import { City } from "./city"
 import { Country } from "./country"
 import { Image } from "./image"
+import { GuideCategory } from "./guide-category"
 
 export class Guide {
   @IsUUID(4, { message: "Invalid UUID" })
@@ -13,6 +14,9 @@ export class Guide {
 
   @IsString()
   text: string
+
+  @Type(() => GuideCategory)
+  categories: GuideCategory[]
 
   @Type(() => Image)
   primaryImages: Image[]
