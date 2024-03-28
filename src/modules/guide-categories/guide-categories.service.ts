@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common"
 import { plainToInstance } from "class-transformer"
 import { MAX_PAGE_SIZE } from "../common/constants"
+import { getValidPageNumber, getValidPageSize } from "../common/utils/pagination"
 import { PrismaService } from "../prisma/prisma.service"
 import { GuideCategoryDto } from "./dto/guide-category.dto"
 
@@ -12,13 +13,13 @@ export class GuideCategoriesService {
   ) {}
 
   async findAll(): Promise<GuideCategoryDto[]> {
-    const limit = MAX_PAGE_SIZE
-    const page = 1
+    const pageSize = getValidPageSize({ pageSize: MAX_PAGE_SIZE })
+    const page = getValidPageNumber({ page: 1 })
 
     try {
       const result = await this.prismaService.guideCategory.findMany({
-        skip: (page - 1) * limit,
-        take: limit,
+        skip: (page - 1) * pageSize,
+        take: pageSize,
         where: {
           deleted: false,
         },
