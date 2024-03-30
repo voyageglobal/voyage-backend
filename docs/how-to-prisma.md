@@ -1,3 +1,5 @@
+# How to use Prisma
+
 ###  Use case 1: You want to update the schema of your database
 
 1. Update the schema in `prisma/schema.prisma`
@@ -13,4 +15,11 @@ $ npm run prisma:migrate:dev
 # This command will generate the prisma client in the `node_modules/.prisma/client` directory
 # The generated client will be used by the app to interact with the database
 $ npm run prisma:generate
+```
+
+### Use case 2: You want to seed the database with some initial data
+Run the following command to seed the database with initial data
+```bash
+# Seed the database with initial data
+$ npm run prisma:seed
 ```
