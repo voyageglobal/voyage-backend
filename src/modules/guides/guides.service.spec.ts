@@ -2,7 +2,7 @@ import { Test, TestingModule } from "@nestjs/testing"
 import { getCityMock } from "../../test-utils/mocks/city"
 import { getCountryMock } from "../../test-utils/mocks/country"
 import { getGuideCategoryMock } from "../../test-utils/mocks/guide-category"
-import { getGuideDtoMock, getGuideMock } from "../../test-utils/mocks/guide"
+import { getCreateGuideDtoMock, getGuideDtoMock, getGuideMock } from "../../test-utils/mocks/guide"
 import { getImageMock } from "../../test-utils/mocks/image"
 import { PrismaClientMock, prismaMock } from "../../test-utils/prisma"
 import { MockedLogger } from "../../test-utils/providers"
@@ -30,6 +30,67 @@ describe("GuidesService", () => {
 
   it("should be defined", () => {
     expect(service).toBeDefined()
+  })
+
+  describe("Create guide", () => {
+    it("should create a guide", async () => {
+      const guide = getGuideMock({
+        id: "new-guide-id",
+        name: "New guide 1",
+      })
+      const createGuideDto = getCreateGuideDtoMock({
+        name: guide.name,
+      })
+      const expectedGuideDto = getGuideDtoMock({
+        id: guide.id,
+        name: createGuideDto.name,
+      })
+      prisma.guide.create.mockResolvedValueOnce(guide)
+
+      const createdGuideDto = await service.create(createGuideDto)
+
+      expect(createdGuideDto.name).toEqual(expectedGuideDto.name)
+    })
+
+    it("should create a guide containing categories ids", async () => {
+      const guideCategories = [
+        getGuideCategoryMock({ key: "category-key-1" }),
+        getGuideCategoryMock({ key: "category-key-2" }),
+      ]
+      const guide = getGuideMock({
+        id: "new-guide-id",
+        name: "New guide 1",
+        categories: guideCategories,
+      })
+      const createGuideDto = getCreateGuideDtoMock({
+        name: guide.name,
+        categories: guideCategories.map(category => category.key),
+      })
+      const expectedGuideDto = getGuideDtoMock({
+        id: guide.id,
+        name: createGuideDto.name,
+        categories: createGuideDto.categories.map(categoryKey => {
+          return getGuideCategoryMock({ key: categoryKey })
+        }),
+      })
+      prisma.guide.create.mockResolvedValueOnce(guide)
+
+      const createdGuideDto = await service.create(createGuideDto)
+      expect(createdGuideDto.id).toEqual(expectedGuideDto.id)
+      expect(createdGuideDto.categories).toEqual(expectedGuideDto.categories)
+    })
+
+    it("should throw an error", async () => {
+      const createGuideDtoMock = getCreateGuideDtoMock()
+      const error = new Error("Test error")
+      prismaMock.guide.create.mockRejectedValueOnce(error)
+
+      try {
+        await service.create(createGuideDtoMock)
+      } catch (error) {
+        expect(error).toEqual(error)
+      }
+    })
   })
 
   describe("Get guides", () => {
