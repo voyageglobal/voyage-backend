@@ -1,3 +1,4 @@
+import { CreateGuideDto } from "../../modules/guides/dto/create-guide.dto"
 import { GuideDto } from "../../modules/guides/dto/guide.dto"
 import { Guide } from "../../modules/guides/entities/guide.entity"
 
@@ -28,6 +29,19 @@ export function getGuideDtoMock(overrides: Partial<GuideDto> = {}): GuideDto {
     contentImages: [],
     cities: [],
     countries: [],
+    ...overrides,
+  }
+}
+
+export function getCreateGuideDtoMock(overrides: Partial<CreateGuideDto> = {}): CreateGuideDto {
+  return {
+    name: "Test Guide",
+    text: "This is a test guide",
+    categories: [],
+    cities: [],
+    countries: [],
+    primaryImages: [],
+    contentImages: [],
     ...overrides,
   }
 }
