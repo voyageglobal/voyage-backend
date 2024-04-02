@@ -54,6 +54,8 @@ export class GuidesController {
   })
   @ApiBody({ type: CreateGuideDto, required: true, description: "The guide to create" })
   async create(@Body() createGuideDto: CreateGuideDto): Promise<CreateGuideResponseDto> {
+    // TODO: Put input validation here
+
     try {
       const creationResult = await this.guidesService.create(createGuideDto)
 
