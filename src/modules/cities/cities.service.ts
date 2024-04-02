@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common"
 import { plainToInstance } from "class-transformer"
-import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from "../common/constants"
 import { PaginationQuery } from "../common/types"
+import { getValidPageNumber, getValidPageSize } from "../common/utils/pagination"
 import { PrismaService } from "../prisma/prisma.service"
 import { CityDto } from "./dto/city.dto"
 
@@ -13,21 +13,20 @@ export class CitiesService {
   ) {}
 
   async findAll(query: PaginationQuery): Promise<CityDto[]> {
-    let limit = query?.pageSize || DEFAULT_PAGE_SIZE
-    limit = limit > MAX_PAGE_SIZE ? MAX_PAGE_SIZE : limit
+    const pageSize = getValidPageSize({ pageSize: query?.pageSize })
 
-    const page = query?.page || DEFAULT_PAGE
+    const page = getValidPageNumber({ page: query?.page })
 
     try {
       const results = await this.prismaService.city.findMany({
-        skip: (page - 1) * limit,
-        take: limit,
-        where: {
-          deleted: false,
-        },
         include: {
           country: true,
           images: true,
+        },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        where: {
+          deleted: false,
         },
       })
 
