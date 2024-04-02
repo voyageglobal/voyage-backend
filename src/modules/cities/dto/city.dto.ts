@@ -20,7 +20,6 @@ export class CityDto extends PickType(City, ["id", "name", "description", "count
     type: String,
     description: "The description of the city",
     example: "Paris is the capital city of France",
-    required: true,
   })
   description: string
 
@@ -60,6 +59,30 @@ export class CityDto extends PickType(City, ["id", "name", "description", "count
   @Type(() => Image)
   images: Image[]
 
+  @ApiProperty({
+    type: Boolean,
+    description: "The deleted status of the city",
+    example: false,
+    required: true,
+  })
   @Exclude()
-  deleted: boolean
+  deleted?: boolean
+
+  @ApiProperty({
+    type: Date,
+    description: "The creation date of the city",
+    example: "2021-09-28T00:00:00.000Z",
+    required: true,
+  })
+  @Exclude()
+  createdAt?: Date
+
+  @ApiProperty({
+    type: Date,
+    description: "The update date of the city",
+    example: "2021-09-28T00:00:00.000Z",
+    required: true,
+  })
+  @Exclude()
+  updatedAt?: Date
 }

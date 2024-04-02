@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger"
 import { Exclude } from "class-transformer"
-import { IsBoolean, IsMimeType, IsOptional, IsString, IsUrl, IsUUID } from "class-validator"
+import { IsBoolean, IsDate, IsMimeType, IsOptional, IsString, IsUrl, IsUUID } from "class-validator"
 
 export class Image {
   @ApiProperty({
@@ -49,6 +49,23 @@ export class Image {
     required: true,
   })
   @IsBoolean()
-  @Exclude()
   deleted: boolean
+
+  @ApiProperty({
+    type: Date,
+    description: "The date the image was created",
+    example: "2022-01-01T00:00:00Z",
+    required: true,
+  })
+  @IsDate()
+  createdAt: Date
+
+  @ApiProperty({
+    type: Date,
+    description: "The date the image was updated",
+    example: "2022-01-01T00:00:00Z",
+    required: true,
+  })
+  @IsDate()
+  updatedAt: Date
 }

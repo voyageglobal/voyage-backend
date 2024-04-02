@@ -1,8 +1,9 @@
 import { Injectable, Logger } from "@nestjs/common"
 import { Prisma } from "@prisma/client"
 import { plainToClass, plainToInstance } from "class-transformer"
-import { DEFAULT_PAGE, MAX_PAGE_SIZE, PRISMA_ERROR_CODES } from "../common/constants"
+import { PRISMA_ERROR_CODES } from "../common/constants"
 import { PaginationQuery } from "../common/types"
+import { getValidPageNumber, getValidPageSize } from "../common/utils/pagination"
 import { PrismaService } from "../prisma/prisma.service"
 import { DEFAULT_GUIDES_PAGE_SIZE } from "./constants"
 import { CreateGuideDto } from "./dto/create-guide.dto"
@@ -23,9 +24,13 @@ export class GuidesService {
           name: createGuideDto.name,
           text: createGuideDto.text,
           primaryImages: {
+            // TODO: possibly replace on connect due to the fact the image upload should create an image record
+            // or connectAndCreate at least
             create: createGuideDto.primaryImages,
           },
           contentImages: {
+            // TODO: possibly replace on connect due to the fact the image upload should create an image record
+            // or connectAndCreate at least
             create: createGuideDto?.contentImages,
           },
           countries: {
@@ -42,8 +47,16 @@ export class GuidesService {
               }
             }),
           },
+          categories: {
+            connect: createGuideDto.categories.map(categoryKey => {
+              return {
+                key: categoryKey,
+              }
+            }),
+          },
         },
         include: {
+          categories: true,
           primaryImages: true,
           contentImages: true,
           cities: true,
@@ -63,7 +76,6 @@ export class GuidesService {
       }
 
       if (error instanceof Error) {
-        console.error("CreateGuide", error.toString())
         this.logger.error(`Error creating guide: ${error.message}`)
 
         throw error
@@ -76,7 +88,16 @@ export class GuidesService {
 
   async findOne(id: string): Promise<GuideDto | null> {
     try {
-      const guide = await this.prismaService.guide.findUnique({ where: { id, deleted: false } })
+      const guide = await this.prismaService.guide.findUnique({
+        include: {
+          primaryImages: true,
+          contentImages: true,
+          categories: true,
+          countries: true,
+          cities: true,
+        },
+        where: { id, deleted: false },
+      })
 
       const guideDto = plainToInstance(GuideDto, guide)
 
@@ -94,19 +115,26 @@ export class GuidesService {
   }
 
   async findAll(query: PaginationQuery): Promise<GuideDto[]> {
-    let limit = query?.pageSize ?? DEFAULT_GUIDES_PAGE_SIZE
-    limit = limit > MAX_PAGE_SIZE ? MAX_PAGE_SIZE : limit
+    const pageSize = getValidPageSize({
+      pageSize: query?.pageSize,
+      defaultPageSize: DEFAULT_GUIDES_PAGE_SIZE,
+    })
 
-    const page = query?.page ?? DEFAULT_PAGE
+    const page = getValidPageNumber({
+      page: query?.page,
+    })
 
     try {
       const guides = await this.prismaService.guide.findMany({
         include: {
           primaryImages: true,
           contentImages: true,
+          categories: true,
+          cities: true,
+          countries: true,
         },
-        take: limit,
-        skip: (page - 1) * limit,
+        take: pageSize,
+        skip: (page - 1) * pageSize,
         where: {
           deleted: false,
         },
@@ -129,6 +157,13 @@ export class GuidesService {
 
   async update(id: string, updateGuideDto: UpdateGuideDto) {
     const updatedGuide = this.prismaService.guide.update({
+      include: {
+        primaryImages: true,
+        contentImages: true,
+        categories: true,
+        cities: true,
+        countries: true,
+      },
       data: {
         id: id,
         name: updateGuideDto.name,

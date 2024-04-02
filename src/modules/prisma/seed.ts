@@ -1,14 +1,32 @@
+import "dotenv/config"
 import { PrismaClient } from "@prisma/client"
-// import { readFileSync } from 'fs';
+import { processGuideCategoriesSeed } from "./seeds/guide-categories"
+
+const env = process.env.NODE_ENV
+const isProduction = env === "production"
 
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log(`Start seeding ...`)
+  console.log(`Start seeding...`)
+  console.log(`Env: ${env}`)
 
-  // DO SOME SEEDING HERE
-  // E.G.
-  // const users = JSON.parse(readFileSync('src/prisma/seeds/users.json', 'utf-8'));
+  if (isProduction) {
+    console.error(`Seeding is not allowed in production.`)
+    return
+  }
+
+  console.log(`Seeding Guide Categories started`)
+  try {
+    const isSuccessful = await processGuideCategoriesSeed(prisma)
+
+    if (!isSuccessful) {
+      console.error(`Error on Guide Categories seeding`)
+    }
+  } catch (error) {
+    console.error(`Error on Guide Categories seeding: ${error}`)
+  }
+  console.log(`Seeding Guide Categories finished`)
 
   console.log(`Seeding finished.`)
 }
