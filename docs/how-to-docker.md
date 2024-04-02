@@ -12,7 +12,7 @@ $ docker login
 
 To build the image, run the following command:
 ```bash
-$ docker build -t <IMAGE_NAME> .
+$ docker build -t <IMAGE_NAME:TAG> .
 ````
 
 To push the image to the repository, run the following command:
@@ -43,6 +43,11 @@ To remove the image from the local machine, run the following command:
 $ docker images
 # To remove the image
 $ docker rmi <CONTAINER_ID>
+```
+
+To list all the containers, run the following command:
+```bash
+$ docker ps -a
 ```
 
 To clean up the docker system, run the following command:
