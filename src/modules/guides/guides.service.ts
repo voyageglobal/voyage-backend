@@ -18,11 +18,16 @@ export class GuidesService {
   ) {}
 
   async create(createGuideDto: CreateGuideDto): Promise<GuideDto> {
+    const visitedDateStart = createGuideDto.visitedDateStart ?? new Date()
+    const visitedDateEnd = createGuideDto.visitedDateEnd ?? createGuideDto.visitedDateStart ?? new Date()
+
     try {
       const createdGuide = await this.prismaService.guide.create({
         data: {
           name: createGuideDto.name,
           text: createGuideDto.text,
+          visitedDateStart: visitedDateStart,
+          visitedDateEnd: visitedDateEnd,
           primaryImages: {
             // TODO: possibly replace on connect due to the fact the image upload should create an image record
             // or connectAndCreate at least

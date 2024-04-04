@@ -15,6 +15,12 @@ export class Guide {
   @IsString()
   text: string
 
+  @IsDate()
+  visitedDateStart: Date
+
+  @IsDate()
+  visitedDateEnd: Date
+
   @Type(() => GuideCategory)
   categories: GuideCategory[]
 

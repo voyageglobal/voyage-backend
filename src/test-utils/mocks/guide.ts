@@ -7,6 +7,8 @@ export function getGuideMock(overrides: Partial<Guide> = {}): Guide {
     id: "guide-1",
     name: "Test Guide",
     text: "This is a test guide",
+    visitedDateStart: new Date("2021-01-01T00:00:00Z"),
+    visitedDateEnd: new Date("2021-01-01T00:00:00Z"),
     categories: [],
     primaryImages: [],
     contentImages: [],
@@ -29,6 +31,8 @@ export function getGuideDtoMock(overrides: Partial<GuideDto> = {}): GuideDto {
     contentImages: [],
     cities: [],
     countries: [],
+    visitedDateStart: new Date("2021-01-01T00:00:00Z"),
+    visitedDateEnd: new Date("2021-01-01T00:00:00Z"),
     ...overrides,
   }
 }
@@ -42,6 +46,8 @@ export function getCreateGuideDtoMock(overrides: Partial<CreateGuideDto> = {}): 
     countries: [],
     primaryImages: [],
     contentImages: [],
+    visitedDateStart: new Date("2021-01-01T00:00:00Z"),
+    visitedDateEnd: new Date("2021-01-01T00:00:00Z"),
     ...overrides,
   }
 }
