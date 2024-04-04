@@ -27,8 +27,8 @@ model Guide {
 
   // tags String[]
 
-  visitedDateStart DateTime
-  visitedDateEnd   DateTime
+  visitedDateStart DateTime?
+  visitedDateEnd   DateTime?
 
   // authorId String
   // author User @relation(fields: [authorId], references: [id])
