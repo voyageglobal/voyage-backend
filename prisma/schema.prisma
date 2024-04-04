@@ -27,7 +27,8 @@ model Guide {
 
   // tags String[]
 
-  // visitedDate DateTime
+  visitedDateStart DateTime
+  visitedDateEnd   DateTime
 
   // authorId String
   // author User @relation(fields: [authorId], references: [id])
