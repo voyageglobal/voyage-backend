@@ -1,5 +1,5 @@
 import { ApiProperty, PickType } from "@nestjs/swagger"
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsString, IsUUID } from "class-validator"
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsDate, IsString, IsUUID } from "class-validator"
 import {
   GUIDE_CATEGORIES_MAX_SIZE,
   GUIDE_CATEGORIES_MIN_SIZE,
@@ -60,4 +60,20 @@ export class UpdateGuideDto extends PickType(Guide, ["id", "name", "text", "prim
   @ArrayMinSize(GUIDE_CATEGORIES_MIN_SIZE)
   @ArrayMaxSize(GUIDE_CATEGORIES_MAX_SIZE)
   categories: string[]
+
+  @ApiProperty({
+    type: Date,
+    description: "The date the place was last visited",
+    example: "2021-09-01T00:00:00.000Z",
+  })
+  @IsDate()
+  visitedDateStart: Date
+
+  @ApiProperty({
+    type: Date,
+    description: "The date the place was last visited",
+    example: "2021-09-01T00:00:00.000Z",
+  })
+  @IsDate()
+  visitedDateEnd: Date
 }
