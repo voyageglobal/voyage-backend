@@ -80,6 +80,102 @@ describe("GuidesService", () => {
       expect(createdGuideDto.categories).toEqual(expectedGuideDto.categories)
     })
 
+    it("should create a guide containing visited date fields", async () => {
+      const startDate = new Date("2021-01-01")
+      const endDate = new Date("2021-01-02")
+      const guideName = "New guide 1"
+      const guide = getGuideMock({
+        id: "new-guide-id",
+        name: guideName,
+        visitedDateStart: startDate,
+        visitedDateEnd: endDate,
+      })
+      const createGuideDto = getCreateGuideDtoMock({
+        name: guideName,
+        visitedDateStart: startDate,
+        visitedDateEnd: endDate,
+      })
+      const expectedGuideDto = getGuideDtoMock({
+        id: guide.id,
+        name: guideName,
+        visitedDateStart: createGuideDto.visitedDateStart,
+        visitedDateEnd: createGuideDto.visitedDateEnd,
+      })
+      prisma.guide.create.mockResolvedValueOnce(guide)
+
+      const createdGuideDto = await service.create(createGuideDto)
+      expect(prisma.guide.create.mock.calls[0][0].data.visitedDateStart.toString()).toEqual(startDate.toString())
+      expect(prisma.guide.create.mock.calls[0][0].data.visitedDateEnd.toString()).toEqual(endDate.toString())
+      expect(createdGuideDto).toEqual(expectedGuideDto)
+      expect(createdGuideDto.visitedDateStart.toDateString()).toEqual(expectedGuideDto.visitedDateStart.toDateString())
+      expect(createdGuideDto.visitedDateEnd.toDateString()).toEqual(expectedGuideDto.visitedDateEnd.toDateString())
+    })
+
+    it("should create guide containing visited date fields equal to now if they weren't provided", async () => {
+      const fakeNowDate = new Date("2021-01-01")
+      jest.useFakeTimers({
+        now: fakeNowDate,
+      })
+      jest.setSystemTime(fakeNowDate)
+      const guideName = "New guide 1"
+      const guide = getGuideMock({
+        id: "new-guide-id",
+        name: guideName,
+        visitedDateStart: fakeNowDate,
+        visitedDateEnd: fakeNowDate,
+      })
+      const createGuideDto = getCreateGuideDtoMock({
+        name: guideName,
+        visitedDateStart: undefined,
+        visitedDateEnd: undefined,
+      })
+      const expectedGuideDto = getGuideDtoMock({
+        id: guide.id,
+        name: guideName,
+        visitedDateStart: fakeNowDate,
+        visitedDateEnd: fakeNowDate,
+      })
+      prisma.guide.create.mockResolvedValueOnce(guide)
+
+      const createdGuideDto = await service.create(createGuideDto)
+      expect(prisma.guide.create.mock.calls[0][0].data.visitedDateStart.toString()).toEqual(fakeNowDate.toString())
+      expect(prisma.guide.create.mock.calls[0][0].data.visitedDateEnd.toString()).toEqual(fakeNowDate.toString())
+      expect(createdGuideDto).toEqual(expectedGuideDto)
+      expect(createdGuideDto.visitedDateStart.toDateString()).toEqual(expectedGuideDto.visitedDateStart.toDateString())
+      expect(createdGuideDto.visitedDateEnd.toDateString()).toEqual(expectedGuideDto.visitedDateEnd.toDateString())
+      jest.useRealTimers()
+    })
+
+    it("should create guide containing visited date end same as start if end date wasn't provided", async () => {
+      const startDate = new Date("2021-01-01")
+      const guideName = "New guide 1"
+      const guide = getGuideMock({
+        id: "new-guide-id",
+        name: guideName,
+        visitedDateStart: startDate,
+        visitedDateEnd: startDate,
+      })
+      const createGuideDto = getCreateGuideDtoMock({
+        name: guideName,
+        visitedDateStart: startDate,
+        visitedDateEnd: undefined,
+      })
+      const expectedGuideDto = getGuideDtoMock({
+        id: guide.id,
+        name: guideName,
+        visitedDateStart: startDate,
+        visitedDateEnd: startDate,
+      })
+      prisma.guide.create.mockResolvedValueOnce(guide)
+
+      const createdGuideDto = await service.create(createGuideDto)
+
+      expect(prisma.guide.create.mock.calls[0][0].data.visitedDateEnd.toString()).toEqual(startDate.toString())
+      expect(createdGuideDto).toEqual(expectedGuideDto)
+      expect(createdGuideDto.visitedDateStart.toDateString()).toEqual(expectedGuideDto.visitedDateStart.toDateString())
+      expect(createdGuideDto.visitedDateEnd.toDateString()).toEqual(expectedGuideDto.visitedDateEnd.toDateString())
+    })
+
     it("should throw an error", async () => {
       const createGuideDtoMock = getCreateGuideDtoMock()
       const error = new Error("Test error")
