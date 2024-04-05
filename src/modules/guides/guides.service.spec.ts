@@ -184,7 +184,7 @@ describe("GuidesService", () => {
     it("should throw an error", async () => {
       const createGuideDtoMock = getCreateGuideDtoMock()
       const error = new Error("Test error")
-      prismaMock.guide.create.mockRejectedValueOnce(error)
+      prisma.guide.create.mockRejectedValueOnce(error)
 
       try {
         await service.create(createGuideDtoMock)
@@ -347,7 +347,7 @@ describe("GuidesService", () => {
     it("should throw an error", async () => {
       const updateGuideDto = getUpdateGuideDtoMock()
       const error = new Error("Test error")
-      prismaMock.guide.update.mockRejectedValueOnce(error)
+      prisma.guide.update.mockRejectedValueOnce(error)
 
       try {
         await service.update(updateGuideDto.id, updateGuideDto)
@@ -380,9 +380,31 @@ describe("GuidesService", () => {
       expect(guides).toEqual([])
     })
 
+    it("should return an array of guide including visited date fields", async () => {
+      const startDate = new Date("2021-01-01")
+      const endDate = new Date("2021-01-02")
+      const guideMock = getGuideMock({
+        id: "1",
+        visitedDateStart: startDate,
+        visitedDateEnd: endDate,
+      })
+      const guideDtoMock = getGuideDtoMock({ id: "1", visitedDateStart: startDate, visitedDateEnd: endDate })
+      const paginationQuery: PaginationQuery = {
+        pageSize: 1,
+        page: 1,
+      }
+      prisma.guide.findMany.mockResolvedValueOnce([guideMock])
+
+      const guides = await service.findAll(paginationQuery)
+
+      expect(guides).toEqual([guideDtoMock])
+      expect(guides[0].visitedDateStart.toDateString()).toEqual(guideDtoMock.visitedDateStart.toDateString())
+      expect(guides[0].visitedDateEnd.toDateString()).toEqual(guideDtoMock.visitedDateEnd.toDateString())
+    })
+
     it("should throw an error", async () => {
       const error = new Error("Test error")
-      prismaMock.guide.findMany.mockRejectedValueOnce(error)
+      prisma.guide.findMany.mockRejectedValueOnce(error)
       const paginationQuery: PaginationQuery = {
         pageSize: 2,
         page: 1,
@@ -506,6 +528,66 @@ describe("GuidesService", () => {
 
       expect(guides).toEqual([guideDtoMock])
       expect(guides[0].cities).toEqual(guideDtoMock.cities)
+    })
+  })
+
+  describe("Get guide", () => {
+    it("should return a guide", async () => {
+      const guideMock = getGuideMock({
+        id: "1",
+      })
+      const guideDtoMock = getGuideDtoMock({ id: "1" })
+      prisma.guide.findUnique.mockResolvedValueOnce(guideMock)
+
+      const guide = await service.findOne(guideMock.id)
+
+      expect(guide).toEqual(guideDtoMock)
+    })
+
+    it("should return a guide containing visited date fields", async () => {
+      const startDate = new Date("2021-01-01")
+      const endDate = new Date("2021-01-02")
+      const guideMock = getGuideMock({
+        id: "1",
+        visitedDateStart: startDate,
+        visitedDateEnd: endDate,
+      })
+      const guideDtoMock = getGuideDtoMock({ id: "1", visitedDateStart: startDate, visitedDateEnd: endDate })
+      prisma.guide.findUnique.mockResolvedValueOnce(guideMock)
+
+      const guideDto = await service.findOne(guideMock.id)
+      expect(guideDto).toEqual(guideDtoMock)
+      expect(guideDto.visitedDateStart.toDateString()).toEqual(guideDtoMock.visitedDateStart.toDateString())
+      expect(guideDto.visitedDateEnd.toDateString()).toEqual(guideDtoMock.visitedDateEnd.toDateString())
+    })
+
+    it("should return a guide containing category", async () => {
+      const guideCategoryMock = getGuideCategoryMock({ key: "category1" })
+      const guideMock = getGuideMock({
+        id: "1",
+        categories: [guideCategoryMock],
+      })
+      const guideDtoMock = getGuideDtoMock({ id: "1", categories: [guideCategoryMock] })
+      prisma.guide.findUnique.mockResolvedValueOnce(guideMock)
+
+      const guideDto = await service.findOne(guideMock.id)
+
+      expect(guideDto).toEqual(guideDtoMock)
+      expect(guideDto.categories).toEqual(guideDtoMock.categories)
+    })
+
+    it("should throw an error", async () => {
+      const guideMock = getGuideMock({
+        id: "1",
+      })
+      const error = new Error("Test error")
+      prisma.guide.findUnique.mockRejectedValueOnce(error)
+
+      try {
+        await service.findOne(guideMock.id)
+      } catch (error) {
+        expect(error).toEqual(error)
+      }
     })
   })
 })
