@@ -65,6 +65,20 @@ $ npm run prisma:generate
 $ npm run prisma:migrate:dev
 ```
 
+### Connection to DB from PGAdmin
+To connect to the local database in Docker from PGAdmin, use the following host and port:
+```bash
+host = host.docker.internal
+port = DB_PORT_OUT
+```
+
+### Connection to DB from app placed on local machine
+To connect to the local database in Docker from the app placed on the local machine, use the following host and port:
+```bash
+host = localhost
+port = DB_PORT_OUT
+```
+
 ## Local Development
 
 ```bash
