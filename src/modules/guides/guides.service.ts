@@ -76,6 +76,7 @@ export class GuidesService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === PRISMA_ERROR_CODES.UNIQUE_CONSTRAINT) {
           this.logger.error(`Error creating guide: model - ${error.meta?.modelName}, target - ${error.meta?.target}`)
+          this.logger.error(error)
           throw new Error("Guide with this name already exists")
         }
       }
@@ -160,7 +161,7 @@ export class GuidesService {
     }
   }
 
-  async update(id: string, updateGuideDto: UpdateGuideDto) {
+  async update(id: string, updateGuideDto: UpdateGuideDto): Promise<GuideDto> {
     const visitedDateStart = updateGuideDto.visitedDateStart ?? new Date()
     const visitedDateEnd = updateGuideDto.visitedDateEnd ?? updateGuideDto.visitedDateStart ?? new Date()
 
