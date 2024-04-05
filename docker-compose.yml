@@ -21,7 +21,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
-      - ${DB_PORT}:${DB_PORT}
+      - ${DB_PORT_OUT}:${DB_PORT}
 
   pgadmin:
     image: dpage/pgadmin4
