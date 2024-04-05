@@ -2,7 +2,12 @@ import { Test, TestingModule } from "@nestjs/testing"
 import { getCityMock } from "../../test-utils/mocks/city"
 import { getCountryMock } from "../../test-utils/mocks/country"
 import { getGuideCategoryMock } from "../../test-utils/mocks/guide-category"
-import { getCreateGuideDtoMock, getGuideDtoMock, getGuideMock } from "../../test-utils/mocks/guide"
+import {
+  getCreateGuideDtoMock,
+  getGuideDtoMock,
+  getGuideMock,
+  getUpdateGuideDtoMock,
+} from "../../test-utils/mocks/guide"
 import { getImageMock } from "../../test-utils/mocks/image"
 import { PrismaClientMock, prismaMock } from "../../test-utils/prisma"
 import { MockedLogger } from "../../test-utils/providers"
@@ -183,6 +188,169 @@ describe("GuidesService", () => {
 
       try {
         await service.create(createGuideDtoMock)
+      } catch (error) {
+        expect(error).toEqual(error)
+      }
+    })
+  })
+
+  describe("Update guide", () => {
+    it("should update a guide", async () => {
+      const guide = getGuideMock({
+        id: "new-guide-id",
+        name: "New guide 1",
+      })
+      const updateGuideDto = getUpdateGuideDtoMock({
+        id: guide.id,
+        name: guide.name,
+      })
+      const expectedGuideDto = getGuideDtoMock({
+        id: guide.id,
+        name: updateGuideDto.name,
+      })
+      prisma.guide.update.mockResolvedValueOnce(guide)
+
+      const updatedGuideDto = await service.update(updateGuideDto.id, updateGuideDto)
+
+      expect(updatedGuideDto.name).toEqual(expectedGuideDto.name)
+    })
+
+    it("should update a guide containing categories ids", async () => {
+      const guideCategories = [
+        getGuideCategoryMock({ key: "category-key-1" }),
+        getGuideCategoryMock({ key: "category-key-2" }),
+      ]
+      const guide = getGuideMock({
+        id: "new-guide-id",
+        name: "New guide 1",
+        categories: guideCategories,
+      })
+      const updateGuideDto = getUpdateGuideDtoMock({
+        id: guide.id,
+        name: guide.name,
+        categories: guideCategories.map(category => category.key),
+      })
+      const expectedGuideDto = getGuideDtoMock({
+        id: guide.id,
+        name: updateGuideDto.name,
+        categories: updateGuideDto.categories.map(categoryKey => {
+          return getGuideCategoryMock({ key: categoryKey })
+        }),
+      })
+      prisma.guide.update.mockResolvedValueOnce(guide)
+
+      const updatedGuideDto = await service.update(updateGuideDto.id, updateGuideDto)
+
+      expect(updatedGuideDto.id).toEqual(expectedGuideDto.id)
+      expect(updatedGuideDto.categories).toEqual(expectedGuideDto.categories)
+    })
+
+    it("should update guide containing visited date fields", async () => {
+      const startDate = new Date("2021-01-01")
+      const endDate = new Date("2021-01-02")
+      const guideName = "New guide 1"
+      const guide = getGuideMock({
+        id: "new-guide-id",
+        name: guideName,
+        visitedDateStart: startDate,
+        visitedDateEnd: endDate,
+      })
+      const updateGuideDto = getUpdateGuideDtoMock({
+        id: guide.id,
+        name: guideName,
+        visitedDateStart: startDate,
+        visitedDateEnd: endDate,
+      })
+      const expectedGuideDto = getGuideDtoMock({
+        id: guide.id,
+        name: guideName,
+        visitedDateStart: updateGuideDto.visitedDateStart,
+        visitedDateEnd: updateGuideDto.visitedDateEnd,
+      })
+      prisma.guide.update.mockResolvedValueOnce(guide)
+
+      const updatedGuideDto = await service.update(updateGuideDto.id, updateGuideDto)
+
+      expect(prisma.guide.update.mock.calls[0][0].data.visitedDateStart.toString()).toEqual(startDate.toString())
+      expect(prisma.guide.update.mock.calls[0][0].data.visitedDateEnd.toString()).toEqual(endDate.toString())
+      expect(updatedGuideDto).toEqual(expectedGuideDto)
+      expect(updatedGuideDto.visitedDateStart.toDateString()).toEqual(expectedGuideDto.visitedDateStart.toDateString())
+      expect(updatedGuideDto.visitedDateEnd.toDateString()).toEqual(expectedGuideDto.visitedDateEnd.toDateString())
+    })
+
+    it("should update guide containing visited date fields equal to now if they weren't provided", async () => {
+      const fakeNowDate = new Date("2021-01-01")
+      jest.useFakeTimers({
+        now: fakeNowDate,
+      })
+      jest.setSystemTime(fakeNowDate)
+      const guideName = "New guide 1"
+      const guide = getGuideMock({
+        id: "new-guide-id",
+        name: guideName,
+        visitedDateStart: fakeNowDate,
+        visitedDateEnd: fakeNowDate,
+      })
+      const updateGuideDto = getUpdateGuideDtoMock({
+        id: guide.id,
+        name: guideName,
+        visitedDateStart: undefined,
+        visitedDateEnd: undefined,
+      })
+      const expectedGuideDto = getGuideDtoMock({
+        id: guide.id,
+        name: guideName,
+        visitedDateStart: fakeNowDate,
+        visitedDateEnd: fakeNowDate,
+      })
+      prisma.guide.update.mockResolvedValueOnce(guide)
+
+      const updatedGuideDto = await service.update(updateGuideDto.id, updateGuideDto)
+      expect(prisma.guide.update.mock.calls[0][0].data.visitedDateStart.toString()).toEqual(fakeNowDate.toString())
+      expect(prisma.guide.update.mock.calls[0][0].data.visitedDateEnd.toString()).toEqual(fakeNowDate.toString())
+      expect(updatedGuideDto).toEqual(expectedGuideDto)
+      expect(updatedGuideDto.visitedDateStart.toDateString()).toEqual(expectedGuideDto.visitedDateStart.toDateString())
+      expect(updatedGuideDto.visitedDateEnd.toDateString()).toEqual(expectedGuideDto.visitedDateEnd.toDateString())
+      jest.useRealTimers()
+    })
+
+    it("should update guide containing visited date end same as start if end date wasn't provided", async () => {
+      const startDate = new Date("2021-01-01")
+      const guideName = "New guide 1"
+      const guide = getGuideMock({
+        id: "new-guide-id",
+        name: guideName,
+        visitedDateStart: startDate,
+        visitedDateEnd: startDate,
+      })
+      const updateGuideDto = getUpdateGuideDtoMock({
+        name: guideName,
+        visitedDateStart: startDate,
+        visitedDateEnd: undefined,
+      })
+      const expectedGuideDto = getGuideDtoMock({
+        id: guide.id,
+        name: guideName,
+        visitedDateStart: startDate,
+        visitedDateEnd: startDate,
+      })
+      prisma.guide.update.mockResolvedValueOnce(guide)
+
+      const updatedGuideDto = await service.update(updateGuideDto.id, updateGuideDto)
+
+      expect(prisma.guide.update.mock.calls[0][0].data.visitedDateEnd.toString()).toEqual(startDate.toString())
+      expect(updatedGuideDto).toEqual(expectedGuideDto)
+      expect(updatedGuideDto.visitedDateStart.toDateString()).toEqual(expectedGuideDto.visitedDateStart.toDateString())
+      expect(updatedGuideDto.visitedDateEnd.toDateString()).toEqual(expectedGuideDto.visitedDateEnd.toDateString())
+    })
+
+    it("should throw an error", async () => {
+      const updateGuideDto = getUpdateGuideDtoMock()
+      const error = new Error("Test error")
+      prismaMock.guide.update.mockRejectedValueOnce(error)
+
+      try {
+        await service.update(updateGuideDto.id, updateGuideDto)
       } catch (error) {
         expect(error).toEqual(error)
       }

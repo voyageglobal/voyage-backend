@@ -161,18 +161,54 @@ export class GuidesService {
   }
 
   async update(id: string, updateGuideDto: UpdateGuideDto) {
+    const visitedDateStart = updateGuideDto.visitedDateStart ?? new Date()
+    const visitedDateEnd = updateGuideDto.visitedDateEnd ?? updateGuideDto.visitedDateStart ?? new Date()
+
     const updatedGuide = this.prismaService.guide.update({
+      data: {
+        id: id,
+        name: updateGuideDto.name,
+        text: updateGuideDto.text,
+        visitedDateStart: visitedDateStart,
+        visitedDateEnd: visitedDateEnd,
+        primaryImages: {
+          // TODO: possibly replace on connect due to the fact the image upload should create an image record
+          // or connectAndCreate at least
+          create: updateGuideDto.primaryImages,
+        },
+        contentImages: {
+          // TODO: possibly replace on connect due to the fact the image upload should create an image record
+          // or connectAndCreate at least
+          create: updateGuideDto?.contentImages,
+        },
+        countries: {
+          connect: updateGuideDto.countries.map(countryId => {
+            return {
+              id: countryId,
+            }
+          }),
+        },
+        cities: {
+          connect: updateGuideDto.cities.map(cityId => {
+            return {
+              id: cityId,
+            }
+          }),
+        },
+        categories: {
+          connect: updateGuideDto.categories.map(categoryKey => {
+            return {
+              key: categoryKey,
+            }
+          }),
+        },
+      },
       include: {
         primaryImages: true,
         contentImages: true,
         categories: true,
         cities: true,
         countries: true,
-      },
-      data: {
-        id: id,
-        name: updateGuideDto.name,
-        text: updateGuideDto.text,
       },
       where: { id, deleted: false },
     })
