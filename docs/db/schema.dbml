@@ -1,0 +1,75 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Project "voyage" {
+  database_type: 'PostgreSQL'
+  Note: ''
+}
+
+Table Guide {
+  id String [pk]
+  name String [unique, not null]
+  text String [not null]
+  categories GuideCategory [not null]
+  primaryImages Images [not null]
+  contentImages Images [not null]
+  countries Country [not null]
+  cities City [not null]
+  visitedDateStart DateTime
+  visitedDateEnd DateTime
+  deleted Boolean [not null, default: false]
+  updatedAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+}
+
+Table GuideCategory {
+  key String [pk]
+  name String [not null]
+  imageUrl String [not null]
+  guides Guide [not null]
+  deleted Boolean [not null, default: false]
+  updatedAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+}
+
+Table City {
+  id String [pk]
+  name String [not null]
+  description String [not null]
+  images Images [not null]
+  countryId String [not null]
+  country Country [not null]
+  guides Guide [not null]
+  deleted Boolean [not null, default: false]
+  updatedAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+}
+
+Table Country {
+  id String [pk]
+  name String [not null]
+  description String [not null]
+  images Images [not null]
+  cities City [not null]
+  guides Guide [not null]
+  deleted Boolean [not null, default: false]
+  updatedAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+}
+
+Table Images {
+  id String [pk]
+  url String [not null]
+  alt String [not null]
+  type String [not null]
+  guidesByPrimaryImages Guide [not null]
+  guidesByContentImages Guide [not null]
+  cities City [not null]
+  country Country [not null]
+  deleted Boolean [not null, default: false]
+  updatedAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+}
+
+Ref: City.countryId > Country.id

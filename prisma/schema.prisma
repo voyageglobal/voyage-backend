@@ -8,6 +8,17 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator dbml {
+  provider            = "prisma-dbml-generator"
+  projectName         = "voyage"
+  projectDatabaseType = "PostgreSQL"
+  output              = "../docs/db"
+  outputName          = "schema.dbml"
+  // NOTE: manyToMany is disable because this generator doesn't support many-to-many relations yet
+  // Assuming due to different prisma versions
+  manyToMany          = "false"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DB_URL")
