@@ -82,6 +82,7 @@ model Country {
   id          String @id @default(uuid())
   name        String
   description String
+  flag        String
 
   images Images[]
 
