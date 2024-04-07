@@ -7,7 +7,7 @@ The backend for Voyage application.
 Voyage is a service that allows users to plan their trips and look for relevant knowledge about cities.
 
 ## Documentation
-Usefully documentation can be found in the `docs` folder.
+Useful documentation can be found in the `docs` folder.
 
 ## Installation
 
