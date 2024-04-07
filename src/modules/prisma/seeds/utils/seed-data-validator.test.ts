@@ -16,6 +16,20 @@ describe("seed-data-validator", () => {
   })
 
   describe("validateSeedInputData", () => {
+    it("should return false if input isn't array", () => {
+      const data = { name: "John Doe" } as unknown as []
+      const schema = {
+        type: "object",
+        properties: {
+          name: { type: "string", nullable: false },
+        },
+      }
+
+      const isValid = validateSeedInputData(data, schema)
+
+      expect(isValid).toBeFalsy()
+    })
+
     it("should return true if data is valid", () => {
       const data = [{ name: "John Doe" }]
       const schema = {
