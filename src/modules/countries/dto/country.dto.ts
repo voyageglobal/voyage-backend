@@ -4,7 +4,7 @@ import { City } from "../../cities/entities/city.entity"
 import { Image } from "../../images/entities/image.entity"
 import { Country } from "../entities/country.entity"
 
-export class CountryDto extends PickType(Country, ["id", "name", "description", "cities", "images"] as const) {
+export class CountryDto extends PickType(Country, ["id", "name", "description", "flag", "cities", "images"] as const) {
   @ApiProperty({
     type: String,
     description: "The id of the county",
@@ -15,6 +15,9 @@ export class CountryDto extends PickType(Country, ["id", "name", "description", 
 
   @ApiProperty({ type: String, description: "The name of the country", example: "France", required: true })
   name: string
+
+  @ApiProperty({ type: String, description: "The flag of the country", example: "🇫🇷", required: true })
+  flag: string
 
   @ApiProperty({
     type: String,

@@ -15,6 +15,10 @@ export class Country {
   @IsString()
   description: string
 
+  @IsString()
+  @IsNotEmpty()
+  flag: string
+
   @Type(() => Image)
   images: Image[]
 
