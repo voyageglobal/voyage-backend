@@ -16,9 +16,9 @@ Step 3: SSH into the EC2 instance
 $ ssh -i <PEM_FILE> ec2-user@<EC2_PUBLIC_IP>
 ```
 
-Step 4: Clone the repository
+Step 4: Pull the repository
 ```bash
-$ git clone <YOUR_REPOSITORY_URL>
+$ git pull
 ```
 
 Step 5: Pull docker image from the repository

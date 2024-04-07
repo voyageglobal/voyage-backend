@@ -18,7 +18,7 @@ describe("PrismaService", () => {
   })
 
   it("should call connect to db by triggering onModuleInit hook", async () => {
-    const connectSpy = jest.spyOn(service, "$connect")
+    const connectSpy = jest.spyOn(service, "$connect").mockImplementation(() => Promise.resolve())
     await service.onModuleInit()
     expect(connectSpy).toBeCalledTimes(1)
   })
