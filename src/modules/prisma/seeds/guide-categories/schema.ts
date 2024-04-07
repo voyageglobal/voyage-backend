@@ -7,6 +7,10 @@
 // 6. Remove type from schema variable
 // 7. Disable strictNullChecks in tsconfig.json
 
+import { Prisma } from "@prisma/client"
+
+export type GuideCategoryCreateInput = Omit<Prisma.GuideCategoryCreateInput, "guides">
+
 export const schema = {
   type: "object",
   properties: {
