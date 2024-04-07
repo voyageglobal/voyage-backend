@@ -1,4 +1,4 @@
-import { getSchemaValidator, validateSeedInputData } from "./seed-data-validator"
+import { getSchemaValidator, validateSeedData } from "./seed-data-validator"
 
 describe("seed-data-validator", () => {
   describe("getSchemaValidator", () => {
@@ -25,7 +25,7 @@ describe("seed-data-validator", () => {
         },
       }
 
-      const isValid = validateSeedInputData(data, schema)
+      const isValid = validateSeedData(data, schema)
 
       expect(isValid).toBeFalsy()
     })
@@ -39,7 +39,7 @@ describe("seed-data-validator", () => {
         },
       }
 
-      const isValid = validateSeedInputData(data, schema)
+      const isValid = validateSeedData(data, schema)
 
       expect(isValid).toBeTruthy()
     })
@@ -53,7 +53,7 @@ describe("seed-data-validator", () => {
         },
       }
 
-      const isValid = validateSeedInputData(data, schema)
+      const isValid = validateSeedData(data, schema)
 
       expect(isValid).toBeFalsy()
     })

@@ -1,28 +1,20 @@
-import { PrismaClient } from "@prisma/client"
-import { validateSeedInputData, validateSeedPath, extractSeedDataFromFile } from "../utils"
+import { extractSeedDataFromFile, validateSeedData, validateSeedPath } from "../utils"
+import { createSeedProcessor } from "../utils/seed-processor"
 import { GUIDE_CATEGORIES_SEED_PATH } from "./constants"
-import { schema } from "./schema"
-import { GuideCategoryCreateInput } from "./utils"
+import { GuideCategoryCreateInput, schema } from "./schema"
 
-export async function processGuideCategoriesSeed(prisma: PrismaClient): Promise<boolean> {
-  const isPathValid = validateSeedPath(GUIDE_CATEGORIES_SEED_PATH)
+export const processGuideCategoriesSeed = createSeedProcessor<GuideCategoryCreateInput>({
+  validators: {
+    seedPathValidator: () => validateSeedPath(GUIDE_CATEGORIES_SEED_PATH),
+    seedInputDataValidator: (data: GuideCategoryCreateInput[]) => validateSeedData(data, schema),
+  },
+  seedDataExtractor: () => extractSeedDataFromFile(GUIDE_CATEGORIES_SEED_PATH),
+  onProcessSeed: async function handleProcess(prisma, data): Promise<boolean> {
+    const { count } = await prisma.guideCategory.createMany({
+      data: data,
+      skipDuplicates: true,
+    })
 
-  if (!isPathValid) {
-    throw new Error(`Invalid seed path: ${GUIDE_CATEGORIES_SEED_PATH}`)
-  }
-
-  const guideCategories = extractSeedDataFromFile<GuideCategoryCreateInput>(GUIDE_CATEGORIES_SEED_PATH)
-
-  const isValid = validateSeedInputData(guideCategories, schema)
-
-  if (!isValid) {
-    throw new Error("Invalid seed data")
-  }
-
-  const { count } = await prisma.guideCategory.createMany({
-    data: guideCategories,
-    skipDuplicates: true,
-  })
-
-  return count > 0
-}
+    return count > 0
+  },
+})

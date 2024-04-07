@@ -7,6 +7,8 @@
 // 6. Remove type from schema variable
 // 7. Disable strictNullChecks in tsconfig.json
 
+import { Prisma } from "@prisma/client"
+
 export type InputCountySchemaType = {
   id: number
   name: string
@@ -28,6 +30,7 @@ export const inputCountrySchema = {
   required: ["id", "name", "iso3", "capital", "emoji"],
 }
 
+export type CountryCreateInput = Omit<Prisma.CountryCreateInput, "images" | "cities" | "guides">
 // Country entity
 export const outputCountrySchema = {
   type: "object",
