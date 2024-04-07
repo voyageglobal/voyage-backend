@@ -8,6 +8,7 @@ export function getCountryMock(overrides: Partial<Country> = {}): Country {
     id: "country-1",
     name: "France",
     description: "A country in Europe",
+    flag: "🇫🇷",
     cities: [getCityMock()],
     images: [getImageMock()],
     deleted: false,
@@ -21,6 +22,7 @@ export function getCountryDtoMock(overrides: Partial<CountryDto> = {}): CountryD
   return {
     id: "country-dto-1",
     name: "France",
+    flag: "🇫🇷",
     description: "A country in Europe",
     images: [getImageMock()],
     cities: [getCityMock()],
