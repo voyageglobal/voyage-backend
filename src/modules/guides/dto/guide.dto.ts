@@ -45,6 +45,24 @@ export class GuideDto extends PickType(Guide, [
   text: string
 
   @ApiProperty({
+    type: Date,
+    description: "The start date of the visit",
+    example: "2021-01-01T00:00:00.000Z",
+    required: true,
+  })
+  @IsDate()
+  visitedDateStart: Date
+
+  @ApiProperty({
+    type: Date,
+    description: "The end date of the visit",
+    example: "2021-01-01T00:00:00.000Z",
+    required: true,
+  })
+  @IsDate()
+  visitedDateEnd: Date
+
+  @ApiProperty({
     type: [GuideCategory],
     description: "The categories of the guide",
     example: [
