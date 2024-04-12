@@ -26,6 +26,8 @@ Step 5: Pull docker image from the repository
 $ docker-compose pull
 ```
 
+Step 5.1 (optional): Make sure .env file contains the correct values
+
 Step 6: Run the docker image
 ```bash
 $ docker-compose up -d
@@ -38,3 +40,6 @@ $ docker-compose logs
 # To check the status of the container
 $ docker-compose ps
 ```
+
+Step 7.1 (optional): Apply seeds to the database
+[How to apply seed data to external DB](./how-to-apply-seeds-to-external-db.md)
