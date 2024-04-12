@@ -1,6 +1,7 @@
 import "dotenv/config"
 import { PrismaClient } from "@prisma/client"
 import { processGuideCategoriesSeed } from "./seeds/guide-categories"
+import { processCountriesSeed } from "./seeds/countries"
 
 const env = process.env.NODE_ENV
 const isProduction = env === "production"
@@ -27,6 +28,18 @@ async function main() {
     console.error(`Error on Guide Categories seeding: ${error}`)
   }
   console.log(`Seeding Guide Categories finished`)
+
+  console.log("Seeding countries started")
+  try {
+    const isSuccessful = await processCountriesSeed(prisma)
+
+    if (!isSuccessful) {
+      console.error(`Error on countries seeding`)
+    }
+  } catch (error) {
+    console.error(`Error on countries seeding: ${error}`)
+  }
+  console.log(`Seeding countries finished`)
 
   console.log(`Seeding finished.`)
 }
