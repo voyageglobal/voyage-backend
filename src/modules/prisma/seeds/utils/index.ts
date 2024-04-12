@@ -1,4 +1,4 @@
-export { getSchemaValidator, validateSeedInputData } from "./seed-data-validator"
+export { getSchemaValidator, validateSeedData } from "./seed-data-validator"
 
 export { extractSeedDataFromFile } from "./seed-file"
 

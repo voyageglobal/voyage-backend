@@ -15,7 +15,11 @@ export function getSchemaValidator(schema: object): ValidateFunction | null {
 }
 
 // NOTE: schema has type object because ajv force enabled strictNullChecks in tsconfig.json
-export function validateSeedInputData<TData>(data: TData[], schema: object): boolean {
+export function validateSeedData<TData>(data: TData[], schema: object): boolean {
+  if (!Array.isArray(data)) {
+    return false
+  }
+
   const validate = getSchemaValidator(schema)
 
   const isValid = data.every(entity => {

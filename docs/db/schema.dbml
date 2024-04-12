@@ -50,6 +50,7 @@ Table Country {
   id String [pk]
   name String [not null]
   description String [not null]
+  flag String [not null]
   images Images [not null]
   cities City [not null]
   guides Guide [not null]
