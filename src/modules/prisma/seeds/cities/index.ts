@@ -1,0 +1,1 @@
+export { processCitiesSeed } from "./processor"

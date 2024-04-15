@@ -7,7 +7,20 @@ The backend for Voyage application.
 Voyage is a service that allows users to plan their trips and look for relevant knowledge about cities.
 
 ## Documentation
-Useful documentation can be found in the `docs` folder.
+Useful documentation can be found in the [docs](./docs) folder.
+
+### Application stack
+- NodeJS
+- NestJS
+- TypeScript
+- Prisma
+- PostgreSQL
+- Amazon EC2
+- Amazon S3
+- Docker
+- Jest
+- Swagger
+- GitHub Actions
 
 ## Installation
 
