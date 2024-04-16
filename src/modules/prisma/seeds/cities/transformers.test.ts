@@ -22,6 +22,7 @@ describe("cities transformers", () => {
       const inputCountry: InputCitySchemaType = {
         id: 1,
         name: "City",
+        country_code: "C",
       }
       const input = [inputCountry]
       const result = transformSeedInputToOutput(input)
@@ -30,6 +31,7 @@ describe("cities transformers", () => {
           description: "",
           name: "City",
           countryId: null,
+          country_code: "C",
         },
       ])
     })

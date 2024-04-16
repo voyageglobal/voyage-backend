@@ -12,19 +12,22 @@ import { Prisma } from "@prisma/client"
 export type InputCitySchemaType = {
   id: number
   name: string
+  country_code: string
 }
 
 // Schema of input data
 export const inputCitySchema = {
   type: "object",
   properties: {
-    id: { type: "number" },
-    name: { type: "string" },
+    id: { type: "number", nullable: false },
+    name: { type: "string", nullable: false },
+    country_code: { type: "string", nullable: true },
   },
-  required: ["id", "name"],
+  required: ["id", "name", "country_code"],
 } // satisfies JSONSchemaType<InputCitySchemaType>
 
 export type CityCreateManyInput = Omit<Prisma.CityCreateManyInput, "guides" | "images">
+export type CityCreateManyInputExtended = CityCreateManyInput & { country_code: string }
 // Country entity
 export const outputCitySchema = {
   type: "object",
@@ -36,10 +39,11 @@ export const outputCitySchema = {
     name: { type: "string", nullable: false },
     description: { type: "string", nullable: true },
     countryId: { type: "string", nullable: true },
+    country_code: { type: "string", nullable: true },
 
     createdAt: { type: "string", nullable: true },
     updatedAt: { type: "string", nullable: true },
     deleted: { type: "boolean", nullable: true },
   },
   required: ["name"],
-} // satisfies JSONSchemaType<CityCreateManyInput>
+} // satisfies JSONSchemaType<CityCreateManyInputExtended>
