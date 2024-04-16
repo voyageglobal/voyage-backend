@@ -7,7 +7,20 @@ The backend for Voyage application.
 Voyage is a service that allows users to plan their trips and look for relevant knowledge about cities.
 
 ## Documentation
-Useful documentation can be found in the `docs` folder.
+Useful documentation can be found in the [docs](./docs) folder.
+
+### Application stack
+- NodeJS
+- NestJS
+- TypeScript
+- Prisma
+- PostgreSQL
+- Amazon EC2
+- Amazon S3
+- Docker
+- Jest
+- Swagger
+- GitHub Actions
 
 ## Installation
 
@@ -96,3 +109,6 @@ $ tskill PID
 # To generate a new CRUD module, run the following command
 $ nest g res modules/MODULE_NAME
 ```
+
+### Seed data
+Cities, countries data is taken from the [countries-states-cities-database](https://github.com/dr5hn/countries-states-cities-database)

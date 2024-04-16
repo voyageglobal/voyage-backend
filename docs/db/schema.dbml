@@ -51,6 +51,7 @@ Table Country {
   name String [not null]
   description String [not null]
   flag String [not null]
+  iso2Code String
   images Images [not null]
   cities City [not null]
   guides Guide [not null]

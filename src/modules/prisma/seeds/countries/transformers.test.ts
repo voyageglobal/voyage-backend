@@ -21,6 +21,7 @@ describe("countries transformers", () => {
     it("should return array containing 1 transformed item", () => {
       const inputCountry: InputCountySchemaType = {
         id: 1,
+        iso2: "CA",
         iso3: "CAN",
         name: "Country",
         emoji: "🇨🇦",
@@ -31,6 +32,7 @@ describe("countries transformers", () => {
       expect(result).toEqual([
         {
           name: "Country",
+          iso2Code: "CA",
           flag: "🇨🇦",
           description: "Capital",
         },
@@ -40,6 +42,7 @@ describe("countries transformers", () => {
     it("should return array containing 1 transformed item with empty flag value", () => {
       const inputCountry: InputCountySchemaType = {
         id: 1,
+        iso2: "CA",
         iso3: "CAN",
         name: "Country",
         emoji: undefined,
@@ -51,6 +54,7 @@ describe("countries transformers", () => {
         {
           name: "Country",
           flag: "",
+          iso2Code: "CA",
           description: "Capital",
         },
       ])

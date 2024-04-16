@@ -8,6 +8,7 @@ export function transformSeedInputToOutput(input: InputCountySchemaType[]): Coun
       name: countryInput?.name || "",
       flag: countryInput?.emoji || "",
       description: countryInput?.capital || "",
+      iso2Code: countryInput?.iso2 || "",
     }
 
     return dbCountry

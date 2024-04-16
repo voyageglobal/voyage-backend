@@ -10,11 +10,17 @@ export const processGuideCategoriesSeed = createSeedProcessor<GuideCategoryCreat
   },
   seedDataExtractor: () => extractSeedDataFromFile(GUIDE_CATEGORIES_SEED_PATH),
   onProcessSeed: async function handleProcess(prisma, data): Promise<boolean> {
-    const { count } = await prisma.guideCategory.createMany({
-      data: data,
-      skipDuplicates: true,
+    const [total] = await prisma.$transaction(async tx => {
+      await tx.guideCategory.deleteMany()
+
+      const { count } = await tx.guideCategory.createMany({
+        data: data,
+        skipDuplicates: true,
+      })
+
+      return [count]
     })
 
-    return count > 0
+    return total > 0
   },
 })

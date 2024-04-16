@@ -15,11 +15,17 @@ export const processCountriesSeed = createSeedProcessor<InputCountySchemaType, C
   },
   seedDataExtractor: () => extractSeedDataFromFile(COUNTRIES_SEED_PATH),
   onProcessSeed: async function handleProcess(prisma, data): Promise<boolean> {
-    const { count } = await prisma.country.createMany({
-      data: data,
-      skipDuplicates: true,
+    const [total] = await prisma.$transaction(async tx => {
+      await tx.country.deleteMany()
+
+      const { count } = await tx.country.createMany({
+        data: data,
+        skipDuplicates: true,
+      })
+
+      return [count]
     })
 
-    return count > 0
+    return total > 0
   },
 })
