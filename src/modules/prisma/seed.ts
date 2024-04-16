@@ -42,17 +42,17 @@ async function main() {
   }
   console.log(`Seeding countries finished`)
 
-  console.log("Seeding cities started")
-  try {
-    const isSuccessful = await processCitiesSeed(prisma)
-
-    if (!isSuccessful) {
-      console.error(`Error on cities seeding`)
-    }
-  } catch (error) {
-    console.error(`Error on cities seeding: ${error}`)
-  }
-  console.log(`Seeding cities finished`)
+  // console.log("Seeding cities started")
+  // try {
+  //   const isSuccessful = await processCitiesSeed(prisma)
+  //
+  //   if (!isSuccessful) {
+  //     console.error(`Error on cities seeding`)
+  //   }
+  // } catch (error) {
+  //   console.error(`Error on cities seeding: ${error}`)
+  // }
+  // console.log(`Seeding cities finished`)
 
   console.log(`Seeding finished.`)
 }

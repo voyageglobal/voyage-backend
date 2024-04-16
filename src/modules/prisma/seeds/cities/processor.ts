@@ -15,20 +15,28 @@ export const processCitiesSeed = createSeedProcessor<InputCitySchemaType, CityCr
   },
   seedDataExtractor: () => extractSeedDataFromFile(CITIES_SEED_PATH),
   onProcessSeed: async function handleProcess(prisma, rawData): Promise<boolean> {
-    const chunks = splitOutputDataIntoChunks(rawData, 10000)
-
     console.log("Processing cities seed...")
-    let total = 0
-    for (const chunk of chunks) {
-      const { count } = await prisma.city.createMany({
-        data: chunk,
-        skipDuplicates: true,
-      })
 
-      total += count
+    const [total] = await prisma.$transaction(async tx => {
+      let totalChanges = 0
 
-      console.log(`Processed ${count}/${rawData.length} cities`)
-    }
+      await tx.city.deleteMany()
+
+      const chunks = splitOutputDataIntoChunks(rawData, 10000)
+
+      for (const chunk of chunks) {
+        const { count } = await tx.city.createMany({
+          data: chunk,
+          skipDuplicates: true,
+        })
+
+        totalChanges += count
+
+        console.log(`Processed (create) ${count}/${rawData.length} cities`)
+      }
+
+      return [totalChanges]
+    })
     console.log("Cities seed processed successfully")
 
     return total > 0

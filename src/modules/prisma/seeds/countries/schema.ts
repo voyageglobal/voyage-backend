@@ -12,6 +12,7 @@ import { Prisma } from "@prisma/client"
 export type InputCountySchemaType = {
   id: number
   name: string
+  iso2: string
   iso3: string
   capital: string
   emoji: string
@@ -24,10 +25,11 @@ export const inputCountrySchema = {
     id: { type: "number" },
     name: { type: "string" },
     iso3: { type: "string" },
+    iso2: { type: "string" },
     capital: { type: "string" },
     emoji: { type: "string" },
   },
-  required: ["id", "name", "iso3", "capital", "emoji"],
+  required: ["id", "name", "iso2", "iso3", "capital", "emoji"],
 } // satisfies JSONSchemaType<InputCountySchemaType>
 
 export type CountryCreateInput = Omit<Prisma.CountryCreateManyInput, "images" | "cities" | "guides">
@@ -42,6 +44,7 @@ export const outputCountrySchema = {
     name: { type: "string", nullable: false },
     flag: { type: "string", nullable: false },
     description: { type: "string" },
+    iso2Code: { type: "string" },
 
     createdAt: { type: "string", nullable: true },
     updatedAt: { type: "string", nullable: true },

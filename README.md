@@ -109,3 +109,6 @@ $ tskill PID
 # To generate a new CRUD module, run the following command
 $ nest g res modules/MODULE_NAME
 ```
+
+### Seed data
+Cities, countries data is taken from the [countries-states-cities-database](https://github.com/dr5hn/countries-states-cities-database)
