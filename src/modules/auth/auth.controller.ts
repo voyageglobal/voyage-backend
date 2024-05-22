@@ -1,34 +1,50 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from "@nestjs/common"
+import { Body, Controller, Post } from "@nestjs/common"
+import {
+  ApiBadRequestResponse,
+  ApiBody,
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from "@nestjs/swagger"
 import { AuthService } from "./auth.service"
-import { CreateAuthDto } from "./dto/create-auth.dto"
-import { UpdateAuthDto } from "./dto/update-auth.dto"
+import { AuthLoginUserDto } from "./dto/auth-login-user.dto"
+import { AuthRegisterUserDto } from "./dto/auth-register-user.dto"
 
+@ApiTags("auth")
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto)
+  @Post("sign-in")
+  @ApiOperation({ summary: "Sign in" })
+  @ApiBody({ type: AuthLoginUserDto, required: true, description: "The user to sign in" })
+  @ApiOkResponse({
+    description: "The user has been successfully signed in.",
+  })
+  @ApiBadRequestResponse({
+    description: "Bad request",
+  })
+  @ApiInternalServerErrorResponse({
+    description: "Internal server error",
+  })
+  async signIn(@Body() loginUserDto: AuthLoginUserDto) {
+    return this.authService.signIn(loginUserDto)
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll()
-  }
-
-  @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.authService.findOne(+id)
-  }
-
-  @Patch(":id")
-  update(@Param("id") id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto)
-  }
-
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.authService.remove(+id)
+  @Post("sign-up")
+  @ApiOperation({ summary: "Sign up" })
+  @ApiBody({ type: AuthRegisterUserDto, required: true, description: "The user to sign up" })
+  @ApiOkResponse({
+    description: "The user has been successfully signed up.",
+  })
+  @ApiBadRequestResponse({
+    description: "Bad request",
+  })
+  @ApiInternalServerErrorResponse({
+    description: "Internal server error",
+  })
+  async signUp(@Body() signUpUserDto: AuthRegisterUserDto) {
+    return this.authService.signUp(signUpUserDto)
   }
 }
