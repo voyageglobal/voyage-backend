@@ -1,7 +1,9 @@
 import { Injectable, Logger } from "@nestjs/common"
 import { ConfigService } from "@nestjs/config"
-import { CognitoUserAttribute, CognitoUserPool } from "amazon-cognito-identity-js"
+import { AuthenticationDetails, CognitoUser, CognitoUserAttribute, CognitoUserPool } from "amazon-cognito-identity-js"
 import { EnvironmentConfig } from "../../config/env/env-configuration"
+import { AwsCognitoSignInResultDto } from "./dto/aws-cognito-sign-in-result.dto"
+import { AwsCognitoSignInDto } from "./dto/aws-cognito-sign-in.dto"
 import { AwsCognitoSignUpDto } from "./dto/aws-cognito-sign-up.dto"
 import { AwsCognitoUserDto } from "./dto/aws-cognito-user.dto"
 
@@ -45,6 +47,42 @@ export class AwsCognitoService {
 
           resolve(cognitoUserDto)
         }
+      })
+    })
+  }
+
+  async signIn(signInDto: AwsCognitoSignInDto): Promise<AwsCognitoSignInResultDto> {
+    const { password, email } = signInDto
+
+    this.logger.log(`Signing in user with email: ${email}`)
+    const authenticationDetails = new AuthenticationDetails({
+      Username: email,
+      Password: password,
+    })
+
+    const cognitoUser = new CognitoUser({
+      Username: email,
+      Pool: this.cognitoUserPool,
+    })
+
+    return new Promise((resolve, reject) => {
+      cognitoUser.authenticateUser(authenticationDetails, {
+        onSuccess: result => {
+          this.logger.log("User has been signed in")
+
+          const signInResult: AwsCognitoSignInResultDto = {
+            username: email,
+            accessToken: result.getAccessToken().getJwtToken(),
+            refreshToken: result.getRefreshToken().getToken(),
+          }
+
+          resolve(signInResult)
+        },
+        onFailure: error => {
+          this.logger.error("Error while signing in user", error)
+
+          reject(error)
+        },
       })
     })
   }

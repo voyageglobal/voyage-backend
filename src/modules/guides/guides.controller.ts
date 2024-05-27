@@ -195,7 +195,7 @@ export class GuidesController {
   @Patch(":id")
   @ApiOperation({ summary: "Update a guide by id" })
   @ApiParam({ name: "id", type: String })
-  @ApiBody({ type: UpdateGuideDto })
+  @ApiBody({ type: UpdateGuideDto, required: true, description: "The guide to update" })
   @ApiOkResponse({
     description: "The guide has been successfully updated.",
   })

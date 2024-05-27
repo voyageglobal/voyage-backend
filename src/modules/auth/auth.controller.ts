@@ -34,7 +34,11 @@ export class AuthController {
 
   @Post("sign-up")
   @ApiOperation({ summary: "Sign up" })
-  @ApiBody({ type: AuthRegisterUserDto, required: true, description: "The user to sign up" })
+  @ApiBody({
+    type: AuthRegisterUserDto,
+    required: true,
+    description: "The user to sign up",
+  })
   @ApiOkResponse({
     description: "The user has been successfully signed up.",
   })
