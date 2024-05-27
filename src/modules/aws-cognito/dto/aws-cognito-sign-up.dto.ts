@@ -4,7 +4,7 @@ import { PASSWORD_VALIDATION_REGEX } from "../../common/constants"
 export class AwsCognitoSignUpDto {
   @IsString()
   @IsNotEmpty()
-  name: string
+  username: string
 
   @IsEmail()
   @IsNotEmpty()

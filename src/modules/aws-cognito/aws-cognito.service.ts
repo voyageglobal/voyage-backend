@@ -20,20 +20,24 @@ export class AwsCognitoService {
   ) {}
 
   async signUp(signUpDto: AwsCognitoSignUpDto): Promise<AwsCognitoUserDto> {
-    const { password, name, email } = signUpDto
+    const { password, username, email } = signUpDto
 
     this.logger.log(`Signing up user with email: ${email}`)
     const requiredCognitoAttributes: CognitoUserAttribute[] = [
       new CognitoUserAttribute({
         Name: "name",
-        Value: name,
+        Value: username,
+      }),
+      new CognitoUserAttribute({
+        Name: "email",
+        Value: email,
       }),
     ]
 
     const validationData: CognitoUserAttribute[] | null = null
 
     return new Promise((resolve, reject) => {
-      this.cognitoUserPool.signUp(email, password, requiredCognitoAttributes, validationData, (error, result) => {
+      this.cognitoUserPool.signUp(username, password, requiredCognitoAttributes, validationData, (error, result) => {
         if (error || !result) {
           this.logger.error("Error while signing up user", error)
 
