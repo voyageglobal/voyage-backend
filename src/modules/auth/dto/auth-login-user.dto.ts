@@ -5,13 +5,13 @@ import { PASSWORD_VALIDATION_REGEX } from "../../common/constants"
 export class AuthLoginUserDto {
   @ApiProperty({
     type: String,
-    example: "John Doe",
-    description: "The email of the user",
+    example: "john_doe",
+    description: "The username of the user",
     required: true,
   })
   @IsEmail()
   @IsNotEmpty()
-  email: string
+  username: string
 
   @ApiProperty({
     type: String,

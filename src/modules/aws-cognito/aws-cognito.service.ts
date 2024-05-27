@@ -4,6 +4,7 @@ import { AuthenticationDetails, CognitoUser, CognitoUserAttribute, CognitoUserPo
 import { EnvironmentConfig } from "../../config/env/env-configuration"
 import { AwsCognitoSignInResultDto } from "./dto/aws-cognito-sign-in-result.dto"
 import { AwsCognitoSignInDto } from "./dto/aws-cognito-sign-in.dto"
+import { AwsCognitoSignUpConfirmDto } from "./dto/aws-cognito-sign-up-confirm.dto"
 import { AwsCognitoSignUpDto } from "./dto/aws-cognito-sign-up.dto"
 import { AwsCognitoUserDto } from "./dto/aws-cognito-user.dto"
 
@@ -55,17 +56,63 @@ export class AwsCognitoService {
     })
   }
 
-  async signIn(signInDto: AwsCognitoSignInDto): Promise<AwsCognitoSignInResultDto> {
-    const { password, email } = signInDto
+  async signUpConfirm(signUpConfirmDto: AwsCognitoSignUpConfirmDto): Promise<boolean> {
+    const { username, confirmationCode } = signUpConfirmDto
 
-    this.logger.log(`Signing in user with email: ${email}`)
+    this.logger.log("Confirming sign up")
+    const cognitoUser = new CognitoUser({
+      Username: username,
+      Pool: this.cognitoUserPool,
+    })
+
+    return new Promise((resolve, reject) => {
+      cognitoUser.confirmRegistration(confirmationCode, true, error => {
+        if (error) {
+          this.logger.error("Error while confirming sign up", error)
+
+          reject(error)
+        } else {
+          this.logger.log("User has been confirmed")
+
+          resolve(true)
+        }
+      })
+    })
+  }
+
+  async resendConfirmationCode(username: string): Promise<boolean> {
+    this.logger.log("Resending confirmation code")
+    const cognitoUser = new CognitoUser({
+      Username: username,
+      Pool: this.cognitoUserPool,
+    })
+
+    return new Promise((resolve, reject) => {
+      cognitoUser.resendConfirmationCode(error => {
+        if (error) {
+          this.logger.error("Error while resending confirmation code", error)
+
+          reject(error)
+        } else {
+          this.logger.log("Confirmation code has been resent")
+
+          resolve(true)
+        }
+      })
+    })
+  }
+
+  async signIn(signInDto: AwsCognitoSignInDto): Promise<AwsCognitoSignInResultDto> {
+    const { password, username } = signInDto
+
+    this.logger.log(`Signing in user with email: ${username}`)
     const authenticationDetails = new AuthenticationDetails({
-      Username: email,
+      Username: username,
       Password: password,
     })
 
     const cognitoUser = new CognitoUser({
-      Username: email,
+      Username: username,
       Pool: this.cognitoUserPool,
     })
 
@@ -75,7 +122,7 @@ export class AwsCognitoService {
           this.logger.log("User has been signed in")
 
           const signInResult: AwsCognitoSignInResultDto = {
-            username: email,
+            username: username,
             accessToken: result.getAccessToken().getJwtToken(),
             refreshToken: result.getRefreshToken().getToken(),
           }
