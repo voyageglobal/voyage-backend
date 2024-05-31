@@ -8,8 +8,10 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   ValidationPipe,
 } from "@nestjs/common"
+import { AuthGuard } from "@nestjs/passport"
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -37,6 +39,7 @@ import { GuidesService } from "./guides.service"
 export class GuidesController {
   constructor(private readonly guidesService: GuidesService) {}
 
+  @UseGuards(AuthGuard("jwt"))
   @Post()
   @ApiOperation({ summary: "Create a new guide" })
   @ApiCreatedResponse({

@@ -21,6 +21,8 @@ export type EnvironmentConfig = {
   awsCognito: {
     userPoolId: string
     clientId: string
+    audience: string
+    issuer: string
   }
 }
 
@@ -44,6 +46,8 @@ export function getEnvironmentConfig(): EnvironmentConfig {
     awsCognito: {
       userPoolId: process.env.AWS_COGNITO_USER_POOL_ID,
       clientId: process.env.AWS_COGNITO_CLIENT_ID,
+      audience: process.env.AWS_COGNITO_AUDIENCE,
+      issuer: process.env.AWS_COGNITO_ISSUER,
     },
   }
 
