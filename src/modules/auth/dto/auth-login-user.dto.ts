@@ -21,7 +21,8 @@ export class AuthLoginUserDto {
   @IsString()
   @IsNotEmpty()
   @Matches(PASSWORD_VALIDATION_REGEX, {
-    message: "Password must contain at least 8 characters, one letter and one number.",
+    message:
+      "Minimum eight characters, at least one uppercase letter, one lowercase letter, one number, and one special character.",
   })
   password: string
 }
