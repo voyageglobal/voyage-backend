@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger"
-import { IsEmail, IsString, Matches, IsNotEmpty } from "class-validator"
+import { IsNotEmpty, IsString, Matches } from "class-validator"
 import { PASSWORD_VALIDATION_REGEX } from "../../common/constants"
 
 export class AuthLoginUserDto {
@@ -9,7 +9,6 @@ export class AuthLoginUserDto {
     description: "The username of the user",
     required: true,
   })
-  @IsEmail()
   @IsNotEmpty()
   username: string
 

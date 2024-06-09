@@ -12,6 +12,10 @@ import { AuthLoginUserDto } from "./dto/auth-login-user.dto"
 import { AuthRegisterUserConfirmDto } from "./dto/auth-register-user-confirm.dto"
 import { AuthRegisterUserResendConfirmDto } from "./dto/auth-register-user-resend-confirm.dto"
 import { AuthRegisterUserDto } from "./dto/auth-register-user.dto"
+import { AuthSignInResponseDto } from "./dto/auth-sign-in-response.dto"
+import { AuthSignUpConfirmedResponseDto } from "./dto/auth-sign-up-confirmed-response.dto"
+import { AuthSignUpResendConfirmationResponseDto } from "./dto/auth-sign-up-resend-confirmation-response.dto"
+import { AuthSignUpResponseDto } from "./dto/auth-sign-up-response.dto"
 
 @ApiTags("auth")
 @Controller("auth")
@@ -30,8 +34,43 @@ export class AuthController {
   @ApiInternalServerErrorResponse({
     description: "Internal server error",
   })
-  async signIn(@Body() loginUserDto: AuthLoginUserDto) {
-    return this.authService.signIn(loginUserDto)
+  async signIn(@Body() loginUserDto: AuthLoginUserDto): Promise<AuthSignInResponseDto> {
+    try {
+      const signInResult = await this.authService.signIn(loginUserDto)
+
+      return {
+        data: {
+          username: signInResult.username,
+          accessToken: signInResult.accessToken,
+          refreshToken: signInResult.refreshToken,
+        },
+        errors: null,
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        return {
+          data: null,
+          errors: [
+            {
+              message: error.message,
+              name: error.name,
+              stack: error.stack,
+            },
+          ],
+        }
+      }
+
+      return {
+        data: null,
+        errors: [
+          {
+            message: "An error occurred",
+            name: "Error",
+            stack: "",
+          },
+        ],
+      }
+    }
   }
 
   @Post("sign-up")
@@ -50,8 +89,42 @@ export class AuthController {
   @ApiInternalServerErrorResponse({
     description: "Internal server error",
   })
-  async signUp(@Body() signUpUserDto: AuthRegisterUserDto) {
-    return this.authService.signUp(signUpUserDto)
+  async signUp(@Body() signUpUserDto: AuthRegisterUserDto): Promise<AuthSignUpResponseDto> {
+    try {
+      const result = await this.authService.signUp(signUpUserDto)
+
+      return {
+        data: {
+          email: result.email,
+          username: result.username,
+        },
+        errors: null,
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        return {
+          data: null,
+          errors: [
+            {
+              message: error.message,
+              name: error.name,
+              stack: error.stack,
+            },
+          ],
+        }
+      }
+
+      return {
+        data: null,
+        errors: [
+          {
+            message: "An error occurred",
+            name: "Error",
+            stack: "",
+          },
+        ],
+      }
+    }
   }
 
   @Post("sign-up/confirm")
@@ -70,8 +143,41 @@ export class AuthController {
   @ApiInternalServerErrorResponse({
     description: "Internal server error",
   })
-  async signUpConfirm(@Body() signUpConfirmDto: AuthRegisterUserConfirmDto) {
-    return this.authService.signUpConfirm(signUpConfirmDto)
+  async signUpConfirm(@Body() signUpConfirmDto: AuthRegisterUserConfirmDto): Promise<AuthSignUpConfirmedResponseDto> {
+    try {
+      const result = await this.authService.signUpConfirm(signUpConfirmDto)
+
+      return {
+        data: {
+          confirmed: result.confirmed,
+        },
+        errors: null,
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        return {
+          data: null,
+          errors: [
+            {
+              message: error.message,
+              name: error.name,
+              stack: error.stack,
+            },
+          ],
+        }
+      }
+
+      return {
+        data: null,
+        errors: [
+          {
+            message: "An error occurred",
+            name: "Error",
+            stack: "",
+          },
+        ],
+      }
+    }
   }
 
   @Post("sign-up/resend-confirmation-code")
@@ -90,7 +196,42 @@ export class AuthController {
   @ApiInternalServerErrorResponse({
     description: "Internal server error",
   })
-  async resendConfirmationCode(@Body() signUpConfirmResendDto: AuthRegisterUserResendConfirmDto) {
-    return this.authService.resendConfirmationCode(signUpConfirmResendDto)
+  async resendConfirmationCode(
+    @Body() signUpConfirmResendDto: AuthRegisterUserResendConfirmDto,
+  ): Promise<AuthSignUpResendConfirmationResponseDto> {
+    try {
+      const result = await this.authService.resendConfirmationCode(signUpConfirmResendDto)
+
+      return {
+        data: {
+          sent: result.sent,
+        },
+        errors: null,
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        return {
+          data: null,
+          errors: [
+            {
+              message: error.message,
+              name: error.name,
+              stack: error.stack,
+            },
+          ],
+        }
+      }
+
+      return {
+        data: null,
+        errors: [
+          {
+            message: "An error occurred",
+            name: "Error",
+            stack: "",
+          },
+        ],
+      }
+    }
   }
 }

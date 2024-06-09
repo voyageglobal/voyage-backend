@@ -4,6 +4,9 @@ import { AuthLoginUserDto } from "./dto/auth-login-user.dto"
 import { AuthRegisterUserConfirmDto } from "./dto/auth-register-user-confirm.dto"
 import { AuthRegisterUserResendConfirmDto } from "./dto/auth-register-user-resend-confirm.dto"
 import { AuthRegisterUserDto } from "./dto/auth-register-user.dto"
+import { AuthSignUpResendConfirmationDto } from "./dto/auth-sign-up-resend-confirmation.dto"
+import { AuthSignUpResultDto } from "./dto/auth-sign-up-result.dto"
+import { AuthSignUpConfirmedDto } from "./dto/auth-sign-up-confirmed.dto"
 
 @Injectable()
 export class AuthService {
@@ -25,12 +28,12 @@ export class AuthService {
     }
   }
 
-  async signUp(singupUserDto: AuthRegisterUserDto) {
+  async signUp(singupUserDto: AuthRegisterUserDto): Promise<AuthSignUpResultDto> {
     try {
       this.logger.log("Signing up user")
       const { username } = await this.awsCognitoService.signUp(singupUserDto)
 
-      return { username: username }
+      return { email: null, username: username }
     } catch (error) {
       this.logger.error("Error while signing up user", error)
 
@@ -38,13 +41,15 @@ export class AuthService {
     }
   }
 
-  async signUpConfirm(signUpConfirmDto: AuthRegisterUserConfirmDto) {
+  async signUpConfirm(signUpConfirmDto: AuthRegisterUserConfirmDto): Promise<AuthSignUpConfirmedDto> {
     try {
       this.logger.log("Confirming sign up")
 
       const result = await this.awsCognitoService.signUpConfirm(signUpConfirmDto)
 
-      return result
+      return {
+        confirmed: result,
+      }
     } catch (error) {
       this.logger.error("Error while confirming sign up", error)
 
@@ -52,13 +57,17 @@ export class AuthService {
     }
   }
 
-  async resendConfirmationCode(signUpResendConfirmationDto: AuthRegisterUserResendConfirmDto): Promise<boolean> {
+  async resendConfirmationCode(
+    signUpResendConfirmationDto: AuthRegisterUserResendConfirmDto,
+  ): Promise<AuthSignUpResendConfirmationDto> {
     try {
       this.logger.log("Resending confirmation code")
 
       const result = await this.awsCognitoService.resendConfirmationCode(signUpResendConfirmationDto.username)
 
-      return result
+      return {
+        sent: result,
+      }
     } catch (error) {
       this.logger.error("Error while resending confirmation code", error)
 
