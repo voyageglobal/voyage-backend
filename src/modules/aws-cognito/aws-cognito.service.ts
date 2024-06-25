@@ -48,6 +48,8 @@ export class AwsCognitoService {
 
           const cognitoUserDto: AwsCognitoUserDto = {
             username: result.user.getUsername(),
+            email: email,
+            cognitoUserId: result.userSub,
           }
 
           resolve(cognitoUserDto)

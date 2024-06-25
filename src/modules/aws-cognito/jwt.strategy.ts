@@ -4,21 +4,20 @@ import { PassportStrategy } from "@nestjs/passport"
 import { passportJwtSecret } from "jwks-rsa"
 import { ExtractJwt, Strategy } from "passport-jwt"
 import { EnvironmentConfig } from "../../config/env/env-configuration"
+import { AwsCognitoUserDto } from "./dto/aws-cognito-user.dto"
 
 @Injectable()
-export class CognitoJwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private readonly configService: ConfigService) {
+export class CognitoJwtStrategy extends PassportStrategy(Strategy, "cognito-jwt") {
+  constructor(readonly configService: ConfigService) {
     const cognitoIssuer = configService.get<EnvironmentConfig["awsCognito"]>("awsCognito").issuer
-    const cognitoAudience = configService.get<EnvironmentConfig["awsCognito"]>("awsCognito").audience
     const cognitoJwksUri = cognitoIssuer + "/.well-known/jwks.json"
 
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      audience: cognitoAudience,
       issuer: cognitoIssuer,
       algorithms: ["RS256"],
-      secretOrKey: passportJwtSecret({
+      secretOrKeyProvider: passportJwtSecret({
         cache: true,
         rateLimit: true,
         jwksRequestsPerMinute: 5,
@@ -27,7 +26,7 @@ export class CognitoJwtStrategy extends PassportStrategy(Strategy) {
     })
   }
 
-  async validate(payload: { sub: string; email: string }) {
-    return { idUser: payload.sub, email: payload.email }
+  async validate(payload: { sub: string; email: string }): Promise<AwsCognitoUserDto> {
+    return { cognitoUserId: payload.sub, email: payload.email, username: payload.email }
   }
 }
