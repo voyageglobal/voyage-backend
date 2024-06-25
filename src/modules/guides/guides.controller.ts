@@ -1,19 +1,7 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  NotFoundException,
-  Param,
-  Patch,
-  Post,
-  Query,
-  UseGuards,
-  ValidationPipe,
-} from "@nestjs/common"
-import { AuthGuard } from "@nestjs/passport"
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, ValidationPipe } from "@nestjs/common"
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
@@ -25,21 +13,25 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger"
+import { JwtAuthGuard } from "../auth/jwt-auth-guard"
 import { CreateGuideResponseDto } from "./dto/create-guide-response.dto"
 import { CreateGuideDto } from "./dto/create-guide.dto"
 import { GetGuideResponseDto } from "./dto/get-guide-response.dto"
 import { GetGuidesQueryDto } from "./dto/get-guides-query.dto"
 import { GetGuidesResponseDto } from "./dto/get-guides-response.dto"
 import { GuideDto } from "./dto/guide.dto"
+import { RemoveGuideResponseDto } from "./dto/remove-guide-response.dto"
+import { UpdateGuideResponseDto } from "./dto/update-guide-response.dto"
 import { UpdateGuideDto } from "./dto/update-guide.dto"
 import { GuidesService } from "./guides.service"
 
 @ApiTags("guides")
+@ApiBearerAuth()
 @Controller("guides")
 export class GuidesController {
   constructor(private readonly guidesService: GuidesService) {}
 
-  @UseGuards(AuthGuard("jwt"))
+  @UseGuards(JwtAuthGuard)
   @Post()
   @ApiOperation({ summary: "Create a new guide" })
   @ApiCreatedResponse({
@@ -138,6 +130,17 @@ export class GuidesController {
           ],
         }
       }
+
+      return {
+        data: null,
+        errors: [
+          {
+            message: "Unexpected error getting guides",
+            name: "UnexpectedError",
+            stack: null,
+          },
+        ],
+      }
     }
   }
 
@@ -167,20 +170,12 @@ export class GuidesController {
     try {
       const result = await this.guidesService.findOne(id)
 
-      if (!result) {
-        throw new NotFoundException()
-      }
-
       return {
         data: result,
         errors: null,
       }
     } catch (error) {
       if (error instanceof Error) {
-        if (error instanceof NotFoundException) {
-          throw error
-        }
-
         return {
           data: null,
           errors: [
@@ -195,6 +190,7 @@ export class GuidesController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(":id")
   @ApiOperation({ summary: "Update a guide by id" })
   @ApiParam({ name: "id", type: String })
@@ -202,29 +198,98 @@ export class GuidesController {
   @ApiOkResponse({
     description: "The guide has been successfully updated.",
   })
+  @ApiUnauthorizedResponse({
+    description: "Unauthorized",
+  })
   @ApiNotFoundResponse({
     description: "Guide not found",
   })
   @ApiInternalServerErrorResponse({
     description: "Internal server error",
   })
-  update(@Param("id") id: string, @Body() updateGuideDto: UpdateGuideDto) {
-    return this.guidesService.update(id, updateGuideDto)
+  async update(@Param("id") id: string, @Body() updateGuideDto: UpdateGuideDto): Promise<UpdateGuideResponseDto> {
+    try {
+      const result = await this.guidesService.update(id, updateGuideDto)
+
+      return {
+        data: result,
+        errors: null,
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        return {
+          data: null,
+          errors: [
+            {
+              message: err.message,
+              name: err.name,
+              stack: err.stack,
+            },
+          ],
+        }
+      }
+
+      return {
+        data: null,
+        errors: [
+          {
+            message: "Unexpected error updating guide",
+            name: "UnexpectedError",
+            stack: null,
+          },
+        ],
+      }
+    }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(":id")
   @ApiOperation({ summary: "Delete a guide by id" })
   @ApiParam({ name: "id", type: String })
   @ApiOkResponse({
     description: "The guide has been successfully deleted.",
   })
+  @ApiUnauthorizedResponse({
+    description: "Unauthorized",
+  })
   @ApiNotFoundResponse({
     description: "Guide not found",
   })
   @ApiInternalServerErrorResponse({
     description: "Internal server error",
   })
-  remove(@Param("id") id: string) {
-    return this.guidesService.remove(id)
+  async remove(@Param("id") id: string): Promise<RemoveGuideResponseDto> {
+    try {
+      const removedGuide = await this.guidesService.remove(id)
+
+      return {
+        data: removedGuide,
+        errors: null,
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        return {
+          data: null,
+          errors: [
+            {
+              message: err.message,
+              name: err.name,
+              stack: err.stack,
+            },
+          ],
+        }
+      }
+
+      return {
+        data: null,
+        errors: [
+          {
+            message: "Unexpected error removing guide",
+            name: "UnexpectedError",
+            stack: null,
+          },
+        ],
+      }
+    }
   }
 }
