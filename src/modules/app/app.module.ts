@@ -1,11 +1,13 @@
 import { CacheModule } from "@nestjs/cache-manager"
 import { Logger, Module, ModuleMetadata } from "@nestjs/common"
 import { ConfigModule } from "@nestjs/config"
+import { AuthModule } from "../auth/auth.module"
 import { CitiesModule } from "../cities/cities.module"
 import { CountriesModule } from "../countries/countries.module"
 import { GuideCategoriesModule } from "../guide-categories/guide-categories.module"
 import { GuidesModule } from "../guides/guides.module"
 import { ImagesModule } from "../images/images.module"
+import { UsersModule } from "../users/users.module"
 import { AppController } from "./app.controller"
 import { AppService } from "./app.service"
 import { getEnvironmentConfig } from "../../config/env/env-configuration"
@@ -28,6 +30,8 @@ const API_MODULES: ModuleImports = [
   CountriesModule,
   CitiesModule,
   HealthCheckModule,
+  AuthModule,
+  UsersModule,
 ]
 
 @Module({

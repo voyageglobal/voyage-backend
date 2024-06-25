@@ -1,4 +1,4 @@
-import { INestApplication } from "@nestjs/common"
+import { INestApplication, ValidationPipe } from "@nestjs/common"
 import { NestFactory } from "@nestjs/core"
 import { SwaggerModule } from "@nestjs/swagger"
 import { ConfigService } from "@nestjs/config"
@@ -17,6 +17,12 @@ async function bootstrap() {
   setupSwagger(app)
 
   app.use(cookieParser())
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+    }),
+  )
 
   const configService = app.get<ConfigService<EnvironmentConfig>>(ConfigService)
   const appPort = configService.get<number>("app_port")

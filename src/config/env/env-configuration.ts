@@ -18,6 +18,12 @@ export type EnvironmentConfig = {
     region: string
     bucketName: string
   }
+  awsCognito: {
+    userPoolId: string
+    clientId: string
+    audience: string
+    issuer: string
+  }
 }
 
 export function getEnvironmentConfig(): EnvironmentConfig {
@@ -36,6 +42,12 @@ export function getEnvironmentConfig(): EnvironmentConfig {
       secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
       region: process.env.AWS_S3_REGION,
       bucketName: process.env.AWS_S3_BUCKET,
+    },
+    awsCognito: {
+      userPoolId: process.env.AWS_COGNITO_USER_POOL_ID,
+      clientId: process.env.AWS_COGNITO_CLIENT_ID,
+      audience: process.env.AWS_COGNITO_AUDIENCE,
+      issuer: process.env.AWS_COGNITO_ISSUER,
     },
   }
 

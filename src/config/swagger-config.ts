@@ -8,6 +8,7 @@ export function generateSwaggerConfig() {
     .setDescription("The Voyage API description")
     .setVersion("1.0")
     .addTag("voyage")
+    .addBearerAuth()
     .build()
 
   return config
