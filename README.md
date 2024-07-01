@@ -17,6 +17,7 @@ Useful documentation can be found in the [docs](./docs) folder.
 - PostgreSQL
 - Amazon EC2
 - Amazon S3
+- Amazon Cognito
 - Docker
 - Jest
 - Swagger
