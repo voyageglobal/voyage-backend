@@ -8,11 +8,13 @@ import {
   ParseFilePipe,
   Post,
   UploadedFiles,
+  UseGuards,
   UseInterceptors,
 } from "@nestjs/common"
 import { FilesInterceptor } from "@nestjs/platform-express"
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
@@ -25,6 +27,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger"
+import { JwtAuthGuard } from "../auth/jwt-auth-guard"
 import {
   ALLOWED_IMAGE_EXTENSIONS,
   ALLOWED_IMAGE_EXTENSIONS_REGEX,
@@ -36,14 +39,13 @@ import { UploadImagesDto } from "./dto/upload-images.dto"
 import { UploadImagesResponse } from "./dto/upload-images-response"
 import { ImagesService } from "./images.service"
 
+@ApiBearerAuth()
 @ApiTags("images")
 @Controller("images")
 export class ImagesController {
-  constructor(
-    private readonly imagesService: ImagesService,
-    private readonly logger: Logger,
-  ) {}
+  constructor(private readonly imagesService: ImagesService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   @ApiOperation({
     summary: "Upload images",
@@ -129,6 +131,7 @@ export class ImagesController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(":url")
   @ApiOperation({ summary: "Remove an image by url" })
   @ApiParam({ name: "url", type: String })
