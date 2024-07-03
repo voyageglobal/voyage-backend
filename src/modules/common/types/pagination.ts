@@ -24,7 +24,7 @@ export class PageDto<T> {
 
   @ApiProperty({
     type: Number,
-    description: "Total number of items",
+    description: "Total number of items.",
     required: true,
     example: 1,
     minimum: 0,
