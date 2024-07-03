@@ -4,8 +4,8 @@ on:
   push:
     branches-ignore:
       - main
-      - feature/*
-      - bugfix/*
+      - feature/**
+      - bugfix/**
 jobs:
   auto-pull-request:
     name: Auto pull request to master
