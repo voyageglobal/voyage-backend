@@ -10,7 +10,7 @@ import {
   ApiTags,
 } from "@nestjs/swagger"
 import { CitiesService } from "./cities.service"
-import { GetCitiesQueryDto } from "./dto/get-cities-query.dto"
+import { CitiesSortOrder, GetCitiesQueryDto } from "./dto/get-cities-query.dto"
 import { GetCitiesResponseDto } from "./dto/get-cities-response.dto"
 import { GetCityResponseDto } from "./dto/get-city-response.dto"
 
@@ -34,6 +34,17 @@ export class CitiesController {
     type: Number,
     example: 1,
     description: "Page number",
+  })
+  @ApiQuery({
+    name: "sortOrder",
+    required: false,
+    enum: [
+      CitiesSortOrder.POPULARITY_ASC,
+      CitiesSortOrder.POPULARITY_DESC,
+      CitiesSortOrder.NAME_ASC,
+      CitiesSortOrder.NAME_DESC,
+    ],
+    description: "Sort order",
   })
   @ApiOkResponse({
     type: GetCitiesResponseDto,

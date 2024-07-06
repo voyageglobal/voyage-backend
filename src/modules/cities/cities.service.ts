@@ -1,10 +1,11 @@
 import { Injectable, Logger } from "@nestjs/common"
 import { plainToInstance } from "class-transformer"
-import prisma from "../../test-utils/prisma/client"
-import { PageDto, PaginationQuery } from "../common/types"
+import { PageDto } from "../common/types"
 import { getValidPageNumber, getValidPageSize } from "../common/utils/pagination"
 import { PrismaService } from "../prisma/prisma.service"
 import { CityDto } from "./dto/city.dto"
+import { GetCitiesQueryDto } from "./dto/get-cities-query.dto"
+import { getCitiesQueryOrderBy } from "./utils"
 
 @Injectable()
 export class CitiesService {
@@ -13,12 +14,13 @@ export class CitiesService {
     private readonly prismaService: PrismaService,
   ) {}
 
-  async findAll(query: PaginationQuery): Promise<PageDto<CityDto>> {
+  async findAll(query: GetCitiesQueryDto): Promise<PageDto<CityDto>> {
     const pageSize = getValidPageSize({ pageSize: query?.pageSize })
     const page = getValidPageNumber({ page: query?.page })
+    const orderBy = getCitiesQueryOrderBy(query.sortOrder)
 
     try {
-      const [results, total] = await prisma.$transaction([
+      const [results, total] = await this.prismaService.$transaction([
         this.prismaService.city.findMany({
           include: {
             country: true,
@@ -29,9 +31,7 @@ export class CitiesService {
           where: {
             deleted: false,
           },
-          orderBy: {
-            name: "asc",
-          },
+          orderBy: orderBy,
         }),
         this.prismaService.city.count({
           where: {
