@@ -8,6 +8,7 @@ services:
   postgres:
     container_name: voyage-postgres
     image: postgres:alpine
+    platform: linux/amd64
     restart: always
     env_file:
       - .env
@@ -23,6 +24,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
+    platform: linux/amd64
     container_name: voyage-pgadmin
     restart: always
     ports:
@@ -36,6 +38,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    platform: linux/amd64
     image: adadychanka/voyage
     container_name: voyage-server
     restart: always
