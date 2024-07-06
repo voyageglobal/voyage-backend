@@ -2,7 +2,7 @@
 
 # Use node alpine as builder image
 # first stage is used to build and prepare app before runnin
-FROM node:current-slim AS builder
+FROM node:alpine AS builder
 
 # Create app directory
 WORKDIR /app
@@ -26,7 +26,7 @@ COPY . .
 RUN npm run build
 
 # Second stage is used to run the app
-FROM node:current-slim
+FROM node:alpine
 
 COPY --from=builder /app/node_modules ./node_modules/
 COPY --from=builder /app/package*.json ./
