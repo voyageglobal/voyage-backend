@@ -1,4 +1,5 @@
 import { ApiProperty, PickType } from "@nestjs/swagger"
+import { Type } from "class-transformer"
 import { ArrayMaxSize, ArrayMinSize, IsArray, IsDate, IsString, IsUUID } from "class-validator"
 import {
   GUIDE_CATEGORIES_MAX_SIZE,
@@ -12,7 +13,7 @@ export class UpdateGuideDto extends PickType(Guide, ["id", "name", "text", "prim
   @ApiProperty({
     type: [String],
     description: "The list of primary images ids the guide has",
-    examples: ["9a55ee15-d3b6-464f-85b8-755d314b33c1"],
+    example: ["9a55ee15-d3b6-464f-85b8-755d314b33c1"],
   })
   id: string
 
@@ -33,7 +34,7 @@ export class UpdateGuideDto extends PickType(Guide, ["id", "name", "text", "prim
   @ApiProperty({
     type: [String],
     description: "The list of cities ids the guide is about",
-    examples: ["9a55ee15-d3b6-464f-85b8-755d314b33c1"],
+    example: ["9a55ee15-d3b6-464f-85b8-755d314b33c1"],
   })
   @IsArray()
   @IsUUID(4, { each: true })
@@ -43,7 +44,7 @@ export class UpdateGuideDto extends PickType(Guide, ["id", "name", "text", "prim
   @ApiProperty({
     type: [String],
     description: "The list of countries ids the guide is about",
-    examples: ["9a55ee15-d3b6-464f-85b8-755d314b33c1"],
+    example: ["9a55ee15-d3b6-464f-85b8-755d314b33c1"],
   })
   @IsArray()
   @IsUUID(4, { each: true })
@@ -67,6 +68,7 @@ export class UpdateGuideDto extends PickType(Guide, ["id", "name", "text", "prim
     example: "2021-09-01T00:00:00.000Z",
   })
   @IsDate()
+  @Type(() => Date)
   visitedDateStart: Date
 
   @ApiProperty({
@@ -75,5 +77,6 @@ export class UpdateGuideDto extends PickType(Guide, ["id", "name", "text", "prim
     example: "2021-09-01T00:00:00.000Z",
   })
   @IsDate()
+  @Type(() => Date)
   visitedDateEnd: Date
 }
