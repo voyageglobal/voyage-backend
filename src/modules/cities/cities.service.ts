@@ -1,9 +1,11 @@
 import { Injectable, Logger } from "@nestjs/common"
 import { plainToInstance } from "class-transformer"
-import { PaginationQuery } from "../common/types"
+import { PageDto } from "../common/types"
 import { getValidPageNumber, getValidPageSize } from "../common/utils/pagination"
 import { PrismaService } from "../prisma/prisma.service"
 import { CityDto } from "./dto/city.dto"
+import { GetCitiesQueryDto } from "./dto/get-cities-query.dto"
+import { getCitiesQueryOrderBy } from "./utils"
 
 @Injectable()
 export class CitiesService {
@@ -12,27 +14,37 @@ export class CitiesService {
     private readonly prismaService: PrismaService,
   ) {}
 
-  async findAll(query: PaginationQuery): Promise<CityDto[]> {
+  async findAll(query: GetCitiesQueryDto): Promise<PageDto<CityDto>> {
     const pageSize = getValidPageSize({ pageSize: query?.pageSize })
-
     const page = getValidPageNumber({ page: query?.page })
+    const orderBy = getCitiesQueryOrderBy(query.sortOrder)
 
     try {
-      const results = await this.prismaService.city.findMany({
-        include: {
-          country: true,
-          images: true,
-        },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-        where: {
-          deleted: false,
-        },
-      })
+      const [results, total] = await this.prismaService.$transaction([
+        this.prismaService.city.findMany({
+          include: {
+            country: true,
+            images: true,
+          },
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+          where: {
+            deleted: false,
+          },
+          orderBy: orderBy,
+        }),
+        this.prismaService.city.count({
+          where: {
+            deleted: false,
+          },
+        }),
+      ])
+      const hasMore = total > page * pageSize
 
       const citiesDtos = plainToInstance(CityDto, results)
+      const citiesPage = new PageDto<CityDto>(citiesDtos, total, page, pageSize, hasMore)
 
-      return citiesDtos
+      return citiesPage
     } catch (error) {
       if (error instanceof Error) {
         this.logger.error(`Error getting cities: ${error.toString()}`)
