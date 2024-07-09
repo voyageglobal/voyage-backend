@@ -6,7 +6,10 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "collectCoverageFrom": ["**/*.(t|j)s"],
-  "coverageDirectory": "../coverage",
   "testEnvironment": "node",
-  "setupFilesAfterEnv": ["<rootDir>/test-utils/prisma/prisma-instance-mock.ts"]
+  "setupFilesAfterEnv": ["<rootDir>/test-utils/prisma/prisma-instance-mock.ts"],
+  "coverageDirectory": "../coverage",
+  "coveragePathIgnorePatterns": [
+    "<rootDir>/test-utils/"
+  ]
 }

@@ -18,6 +18,7 @@ export class CitiesService {
     const pageSize = getValidPageSize({ pageSize: query?.pageSize })
     const page = getValidPageNumber({ page: query?.page })
     const orderBy = getCitiesQueryOrderBy(query.sortOrder)
+    const onlyWithGuides = query.onlyWithGuides
 
     try {
       const [results, total] = await this.prismaService.$transaction([
@@ -30,12 +31,26 @@ export class CitiesService {
           take: pageSize,
           where: {
             deleted: false,
+            ...(onlyWithGuides && {
+              guides: {
+                some: {
+                  deleted: false,
+                },
+              },
+            }),
           },
           orderBy: orderBy,
         }),
         this.prismaService.city.count({
           where: {
             deleted: false,
+            ...(onlyWithGuides && {
+              guides: {
+                some: {
+                  deleted: false,
+                },
+              },
+            }),
           },
         }),
       ])
