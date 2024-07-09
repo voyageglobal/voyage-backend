@@ -1,6 +1,7 @@
 import { CityDto } from "../../modules/cities/dto/city.dto"
 import { City } from "../../modules/cities/entities/city.entity"
 import { getImageMock } from "./image"
+import { City as PrismaCity } from "@prisma/client"
 
 export function getCityMock(overrides: Partial<City> = {}): City {
   return {
@@ -42,7 +43,20 @@ export function getCityDtoMock(overrides: Partial<CityDto> = {}): CityDto {
       createdAt: new Date(),
       updatedAt: new Date(),
     },
-    images: [],
+    images: [getImageMock()],
+    ...overrides,
+  }
+}
+
+export function getPrismaCityMock(overrides: Partial<PrismaCity> = {}): PrismaCity {
+  return {
+    id: "city-1",
+    name: "Paris",
+    description: "The capital of France",
+    countryId: "country-1",
+    deleted: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
     ...overrides,
   }
 }

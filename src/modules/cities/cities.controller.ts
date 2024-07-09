@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Param, Query, ValidationPipe } from "@nestjs/common"
+import { Controller, Get, NotFoundException, Param, ParseBoolPipe, Query, ValidationPipe } from "@nestjs/common"
 import {
   ApiBadRequestResponse,
   ApiInternalServerErrorResponse,
@@ -45,6 +45,14 @@ export class CitiesController {
       CitiesSortOrder.NAME_DESC,
     ],
     description: "Sort order",
+  })
+  @ApiQuery({
+    name: "onlyWithGuides",
+    required: false,
+    type: Boolean,
+    example: true,
+    description: "Only cities with guides",
+    allowEmptyValue: true,
   })
   @ApiOkResponse({
     type: GetCitiesResponseDto,
