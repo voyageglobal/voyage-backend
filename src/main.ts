@@ -14,6 +14,18 @@ async function bootstrap() {
     logger: getLoggerInstance(),
   })
 
+  const configService = app.get<ConfigService<EnvironmentConfig>>(ConfigService)
+  const appPort = configService.get<EnvironmentConfig["app_port"]>("app_port")
+  const appCors = configService.get<EnvironmentConfig["app_cors"]>("app_cors")
+
+  app.enableCors({
+    origin: appCors,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+    credentials: false,
+  })
+
   setupSwagger(app)
 
   app.use(cookieParser())
@@ -23,9 +35,6 @@ async function bootstrap() {
       transform: true,
     }),
   )
-
-  const configService = app.get<ConfigService<EnvironmentConfig>>(ConfigService)
-  const appPort = configService.get<number>("app_port")
 
   await app.listen(appPort, () => {
     console.log(`Server is running on ${appPort} port!`)
