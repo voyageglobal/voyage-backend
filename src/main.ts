@@ -16,11 +16,11 @@ async function bootstrap() {
 
   const configService = app.get<ConfigService<EnvironmentConfig>>(ConfigService)
   const appPort = configService.get<EnvironmentConfig["app_port"]>("app_port")
-  const appCors = configService.get<EnvironmentConfig["app_cors"]>("app_cors")
+  const corsOrigin = configService.get<EnvironmentConfig["app_cors_origin"]>("app_cors_origin")
 
   app.enableCors({
-    origin: appCors,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    origin: corsOrigin,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
     preflightContinue: false,
     optionsSuccessStatus: 204,
     credentials: false,
