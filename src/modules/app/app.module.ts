@@ -8,6 +8,7 @@ import { GuideCategoriesModule } from "../guide-categories/guide-categories.modu
 import { GuidesModule } from "../guides/guides.module"
 import { ImagesModule } from "../images/images.module"
 import { UsersModule } from "../users/users.module"
+import { StatsModule } from "../stats/stats.module"
 import { AppController } from "./app.controller"
 import { AppService } from "./app.service"
 import { getEnvironmentConfig } from "../../config/env/env-configuration"
@@ -32,6 +33,7 @@ const API_MODULES: ModuleImports = [
   HealthCheckModule,
   AuthModule,
   UsersModule,
+  StatsModule,
 ]
 
 @Module({
