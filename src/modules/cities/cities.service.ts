@@ -5,7 +5,7 @@ import { getValidPageNumber, getValidPageSize } from "../common/utils/pagination
 import { PrismaService } from "../prisma/prisma.service"
 import { CityDto } from "./dto/city.dto"
 import { GetCitiesQueryDto } from "./dto/get-cities-query.dto"
-import { getCitiesQueryOrderBy } from "./utils"
+import { getCitiesQueryOrderBy, getSearchStringFilter } from "./utils"
 
 @Injectable()
 export class CitiesService {
@@ -18,7 +18,9 @@ export class CitiesService {
     const pageSize = getValidPageSize({ pageSize: query?.pageSize })
     const page = getValidPageNumber({ page: query?.page })
     const orderBy = getCitiesQueryOrderBy(query.sortOrder)
-    const onlyWithGuides = query.onlyWithGuides
+    const onlyWithGuides = query?.onlyWithGuides ?? false
+    const searchString = query?.searchString
+    const searchStringFilter = getSearchStringFilter(searchString)
 
     try {
       const [results, total] = await this.prismaService.$transaction([
@@ -38,6 +40,7 @@ export class CitiesService {
                 },
               },
             }),
+            ...searchStringFilter,
           },
           orderBy: orderBy,
         }),
@@ -51,6 +54,7 @@ export class CitiesService {
                 },
               },
             }),
+            ...searchStringFilter,
           },
         }),
       ])

@@ -7,7 +7,10 @@
   },
   "collectCoverageFrom": ["**/*.(t|j)s"],
   "testEnvironment": "node",
-  "setupFilesAfterEnv": ["<rootDir>/test-utils/prisma/prisma-instance-mock.ts"],
+  "setupFilesAfterEnv": [
+    "<rootDir>/test-utils/jest/jest-setup.ts",
+    "<rootDir>/test-utils/prisma/prisma-instance-mock.ts"
+  ],
   "coverageDirectory": "../coverage",
   "coveragePathIgnorePatterns": [
     "<rootDir>/test-utils/"
