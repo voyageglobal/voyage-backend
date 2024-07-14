@@ -51,6 +51,27 @@ describe("CitiesService", () => {
       expect(citiesPage.items[0].name).toEqual(cityDtoMock.name)
     })
 
+    it("should return a list of cities containing search string", async () => {
+      const cityDtoMock = getCityDtoMock({ name: "Search city" })
+      const prismaCityMock = getPrismaCityMock({ id: cityDtoMock.id, name: cityDtoMock.name })
+
+      prisma.$transaction.mockResolvedValue([[prismaCityMock], 1])
+      prisma.city.findMany.mockResolvedValue([prismaCityMock])
+      prisma.city.count.mockResolvedValue(1)
+
+      const citiesPage = await service.findAll({
+        pageSize: 10,
+        sortOrder: CitiesSortOrder.NAME_ASC,
+        onlyWithGuides: false,
+        page: 1,
+        searchString: "search",
+      })
+
+      expect(citiesPage.items).toHaveLength(1)
+      expect(citiesPage.items[0].id).toEqual(cityDtoMock.id)
+      expect(citiesPage.items[0].name).toEqual(cityDtoMock.name)
+    })
+
     it("should return a list of cities with guides", async () => {
       const cityDtoMock = getCityDtoMock()
       const prismaCityMock = getPrismaCityMock({ id: cityDtoMock.id, name: cityDtoMock.name })
