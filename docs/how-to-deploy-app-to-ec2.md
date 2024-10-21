@@ -11,6 +11,10 @@ Step 2: Push the image to the repository
 $ docker-compose push
 ```
 
+> **NOTE**: Step 1 and 2 are moved to the CI/CD pipeline;
+> 
+> Check .github/workflows/push-docker-image.yml for more details
+
 Step 3: SSH into the EC2 instance
 ```bash
 $ ssh -i <PEM_FILE> ec2-user@<EC2_PUBLIC_IP>
