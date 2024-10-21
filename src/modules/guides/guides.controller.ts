@@ -86,9 +86,31 @@ export class GuidesController {
   }
 
   @Get()
-  @ApiOperation({ summary: "Get filtered guides" })
+  @ApiOperation({ summary: "Get guides by query" })
   @ApiQuery({ name: "page", type: Number, required: false, example: 1, description: "The page number" })
   @ApiQuery({ name: "pageSize", type: Number, required: false, example: 10, description: "The page size" })
+  @ApiQuery({
+    name: "orderBy",
+    type: String,
+    required: false,
+    example: "name",
+    description: "The order by field",
+  })
+  @ApiQuery({
+    name: "orderDirection",
+    type: String,
+    required: false,
+    example: "asc",
+    enum: ["asc", "desc"],
+    description: "The order direction",
+  })
+  @ApiQuery({
+    name: "searchString",
+    type: String,
+    required: false,
+    example: "Paris",
+    description: "Search string",
+  })
   @ApiOkResponse({
     description: "The guides have been successfully retrieved.",
     type: GetGuidesResponseDto,
@@ -111,10 +133,10 @@ export class GuidesController {
     paginationQuery: GetGuidesQueryDto,
   ): Promise<GetGuidesResponseDto> {
     try {
-      const guides = await this.guidesService.findAll(paginationQuery)
+      const page = await this.guidesService.findAll(paginationQuery)
 
       return {
-        data: guides,
+        data: page,
         errors: null,
       }
     } catch (error) {

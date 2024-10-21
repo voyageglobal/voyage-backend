@@ -100,6 +100,17 @@ export class CitiesController {
           ],
         }
       }
+
+      return {
+        data: null,
+        errors: [
+          {
+            message: "Unexpected error getting cities",
+            name: "UnexpectedError",
+            stack: null,
+          },
+        ],
+      }
     }
   }
 
