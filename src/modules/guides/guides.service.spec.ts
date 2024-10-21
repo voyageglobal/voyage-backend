@@ -11,9 +11,9 @@ import {
 import { getImageMock } from "../../test-utils/mocks/image"
 import { PrismaClientMock, prismaMock } from "../../test-utils/prisma"
 import { MockedLogger } from "../../test-utils/providers"
-import { PaginationQuery } from "../common/types"
 import { PrismaModule } from "../prisma/prisma.module"
 import { PrismaService } from "../prisma/prisma.service"
+import { GetGuidesQueryDto } from "./dto/get-guides-query.dto"
 import { GuidesService } from "./guides.service"
 
 describe("GuidesService", () => {
@@ -358,57 +358,91 @@ describe("GuidesService", () => {
   })
 
   describe("Get guides", () => {
-    it("should return an empty array of guides when page size equals 0", async () => {
-      const paginationQuery: PaginationQuery = {
+    it("should return page with one item array of guides when page size equals 0", async () => {
+      const query: GetGuidesQueryDto = {
         pageSize: 0,
         page: 1,
       }
-      prisma.guide.findMany.mockResolvedValueOnce([])
-      const guides = await service.findAll(paginationQuery)
+      const guideDtoMock = getGuideDtoMock()
+      const prismaGuideMock = getGuideMock({
+        id: guideDtoMock.id,
+        name: guideDtoMock.name,
+      })
+      prisma.$transaction.mockResolvedValueOnce([[prismaGuideMock], 1])
+      prisma.guide.findMany.mockResolvedValueOnce([prismaGuideMock])
+      prisma.guide.count.mockResolvedValueOnce(1)
 
-      expect(guides).toEqual([])
+      const page = await service.findAll(query)
+
+      expect(page.page).toBe(1)
+      expect(page.pageSize).toBe(20)
+      expect(page.items).toHaveLength(1)
+      expect(page.items[0].id).toBe(guideDtoMock.id)
+      expect(page.items[0].name).toBe(guideDtoMock.name)
+      expect(page.hasMore).toBe(false)
+      expect(page.total).toBe(1)
     })
 
-    it("should return an empty array of guides when page is 0", async () => {
-      const paginationQuery: PaginationQuery = {
+    it("should return page with one guide when page is 0", async () => {
+      const query: GetGuidesQueryDto = {
         pageSize: 1,
         page: 0,
       }
-      prisma.guide.findMany.mockResolvedValueOnce([])
-      const guides = await service.findAll(paginationQuery)
+      const guideDtoMock = getGuideDtoMock()
+      const prismaGuideMock = getGuideMock({
+        id: guideDtoMock.id,
+        name: guideDtoMock.name,
+      })
+      prisma.guide.findMany.mockResolvedValueOnce([prismaGuideMock])
+      prisma.guide.count.mockResolvedValueOnce(1)
+      prisma.$transaction.mockResolvedValueOnce([[prismaGuideMock], 1])
 
-      expect(guides).toEqual([])
+      const page = await service.findAll(query)
+
+      expect(page.page).toBe(1)
+      expect(page.pageSize).toBe(1)
+      expect(page.items).toHaveLength(1)
+      expect(page.items[0].id).toBe(guideDtoMock.id)
+      expect(page.items[0].name).toBe(guideDtoMock.name)
+      expect(page.hasMore).toBe(false)
+      expect(page.total).toBe(1)
     })
 
     it("should return an array of guide including visited date fields", async () => {
       const startDate = new Date("2021-01-01")
       const endDate = new Date("2021-01-02")
-      const guideMock = getGuideMock({
-        id: "1",
+      const guideDtoMock = getGuideDtoMock({
         visitedDateStart: startDate,
         visitedDateEnd: endDate,
       })
-      const guideDtoMock = getGuideDtoMock({ id: "1", visitedDateStart: startDate, visitedDateEnd: endDate })
-      const paginationQuery: PaginationQuery = {
+      const prismaGuideMock = getGuideMock({
+        id: guideDtoMock.id,
+        name: guideDtoMock.name,
+        visitedDateStart: guideDtoMock.visitedDateStart,
+        visitedDateEnd: guideDtoMock.visitedDateEnd,
+      })
+      const paginationQuery: GetGuidesQueryDto = {
         pageSize: 1,
         page: 1,
       }
-      prisma.guide.findMany.mockResolvedValueOnce([guideMock])
+      prisma.$transaction.mockResolvedValueOnce([[prismaGuideMock], 1])
+      prisma.guide.findMany.mockResolvedValueOnce([prismaGuideMock])
+      prisma.guide.count.mockResolvedValueOnce(1)
 
-      const guides = await service.findAll(paginationQuery)
+      const page = await service.findAll(paginationQuery)
 
-      expect(guides).toEqual([guideDtoMock])
-      expect(guides[0].visitedDateStart.toDateString()).toEqual(guideDtoMock.visitedDateStart.toDateString())
-      expect(guides[0].visitedDateEnd.toDateString()).toEqual(guideDtoMock.visitedDateEnd.toDateString())
+      expect(page.items).toHaveLength(1)
+      expect(page.items[0].visitedDateStart.toDateString()).toEqual(guideDtoMock.visitedDateStart.toDateString())
+      expect(page.items[0].visitedDateEnd.toDateString()).toEqual(guideDtoMock.visitedDateEnd.toDateString())
     })
 
     it("should throw an error", async () => {
-      const error = new Error("Test error")
-      prisma.guide.findMany.mockRejectedValueOnce(error)
-      const paginationQuery: PaginationQuery = {
+      const paginationQuery: GetGuidesQueryDto = {
         pageSize: 2,
         page: 1,
       }
+      const error = new Error("Test error")
+      prisma.$transaction.mockRejectedValueOnce(error)
 
       try {
         await service.findAll(paginationQuery)
@@ -426,15 +460,19 @@ describe("GuidesService", () => {
         id: "2",
       })
       const guideDtoMock2 = getGuideDtoMock({ id: "2" })
-      const paginationQuery: PaginationQuery = {
+      const paginationQuery: GetGuidesQueryDto = {
         pageSize: 2,
         page: 1,
       }
+      prisma.$transaction.mockResolvedValueOnce([[guideMock, guideMock2], 2])
       prisma.guide.findMany.mockResolvedValueOnce([guideMock, guideMock2])
 
-      const guides = await service.findAll(paginationQuery)
+      const page = await service.findAll(paginationQuery)
 
-      expect(guides).toEqual([guideDtoMock, guideDtoMock2])
+      expect(page.items).toHaveLength(2)
+      expect(page.total).toBe(2)
+      expect(page.items[0].id).toEqual(guideDtoMock.id)
+      expect(page.items[1].id).toEqual(guideDtoMock2.id)
     })
 
     it("should return array containing 1 guide with categories", async () => {
@@ -444,16 +482,19 @@ describe("GuidesService", () => {
         categories: [guideCategoryMock],
       })
       const guideDtoMock = getGuideDtoMock({ id: "1", categories: [guideCategoryMock] })
-      const paginationQuery: PaginationQuery = {
+      const paginationQuery: GetGuidesQueryDto = {
         pageSize: 1,
         page: 1,
       }
+      prisma.$transaction.mockResolvedValueOnce([[guideMock], 1])
       prisma.guide.findMany.mockResolvedValueOnce([guideMock])
 
-      const guides = await service.findAll(paginationQuery)
+      const page = await service.findAll(paginationQuery)
 
-      expect(guides).toEqual([guideDtoMock])
-      expect(guides[0].categories).toEqual([guideCategoryMock])
+      expect(page.items).toHaveLength(1)
+      expect(page.total).toBe(1)
+      expect(page.items[0]).toEqual(guideDtoMock)
+      expect(page.items[0].categories).toEqual([guideCategoryMock])
     })
 
     it("should return array containing 1 guide with primary images", async () => {
@@ -463,16 +504,19 @@ describe("GuidesService", () => {
         primaryImages: [imageMock],
       })
       const guideDtoMock = getGuideDtoMock({ id: "1", primaryImages: [imageMock] })
-      const paginationQuery: PaginationQuery = {
+      const paginationQuery: GetGuidesQueryDto = {
         pageSize: 1,
         page: 1,
       }
+      prisma.$transaction.mockResolvedValueOnce([[guideMock], 1])
       prisma.guide.findMany.mockResolvedValueOnce([guideMock])
 
-      const guides = await service.findAll(paginationQuery)
+      const page = await service.findAll(paginationQuery)
 
-      expect(guides).toEqual([guideDtoMock])
-      expect(guides[0].primaryImages[0]).toEqual(imageMock)
+      expect(page.items).toHaveLength(1)
+      expect(page.total).toBe(1)
+      expect(page.items[0]).toEqual(guideDtoMock)
+      expect(page.items[0].primaryImages[0]).toEqual(imageMock)
     })
 
     it("should return array containing 1 guide with content images", async () => {
@@ -482,16 +526,19 @@ describe("GuidesService", () => {
         contentImages: [imageMock],
       })
       const guideDtoMock = getGuideDtoMock({ id: "1", contentImages: [imageMock] })
-      const paginationQuery: PaginationQuery = {
+      const paginationQuery: GetGuidesQueryDto = {
         pageSize: 1,
         page: 1,
       }
+      prisma.$transaction.mockResolvedValueOnce([[guideMock], 1])
       prisma.guide.findMany.mockResolvedValueOnce([guideMock])
 
-      const guides = await service.findAll(paginationQuery)
+      const page = await service.findAll(paginationQuery)
 
-      expect(guides).toEqual([guideDtoMock])
-      expect(guides[0].contentImages).toEqual(guideDtoMock.contentImages)
+      expect(page.items).toHaveLength(1)
+      expect(page.total).toBe(1)
+      expect(page.items[0]).toEqual(guideDtoMock)
+      expect(page.items[0].contentImages).toEqual(guideDtoMock.contentImages)
     })
 
     it("should return array containing 1 guide with countries", async () => {
@@ -500,16 +547,19 @@ describe("GuidesService", () => {
         countries: [getCountryMock()],
       })
       const guideDtoMock = getGuideDtoMock({ id: "1", countries: [getCountryMock()] })
-      const paginationQuery: PaginationQuery = {
+      const paginationQuery: GetGuidesQueryDto = {
         pageSize: 1,
         page: 1,
       }
+      prisma.$transaction.mockResolvedValueOnce([[guideMock], 1])
       prisma.guide.findMany.mockResolvedValueOnce([guideMock])
 
-      const guides = await service.findAll(paginationQuery)
+      const page = await service.findAll(paginationQuery)
 
-      expect(guides).toEqual([guideDtoMock])
-      expect(guides[0].countries).toEqual(guideDtoMock.countries)
+      expect(page.items).toHaveLength(1)
+      expect(page.total).toBe(1)
+      expect(page.items[0]).toEqual(guideDtoMock)
+      expect(page.items[0].countries).toEqual(guideDtoMock.countries)
     })
 
     it("should return array containing 1 guide with cities", async () => {
@@ -518,16 +568,19 @@ describe("GuidesService", () => {
         cities: [getCityMock()],
       })
       const guideDtoMock = getGuideDtoMock({ id: "1", cities: [getCityMock()] })
-      const paginationQuery: PaginationQuery = {
+      const paginationQuery: GetGuidesQueryDto = {
         pageSize: 1,
         page: 1,
       }
+      prisma.$transaction.mockResolvedValueOnce([[guideMock], 1])
       prisma.guide.findMany.mockResolvedValueOnce([guideMock])
 
-      const guides = await service.findAll(paginationQuery)
+      const page = await service.findAll(paginationQuery)
 
-      expect(guides).toEqual([guideDtoMock])
-      expect(guides[0].cities).toEqual(guideDtoMock.cities)
+      expect(page.items).toHaveLength(1)
+      expect(page.total).toBe(1)
+      expect(page.items[0]).toEqual(guideDtoMock)
+      expect(page.items[0].cities).toEqual(guideDtoMock.cities)
     })
   })
 

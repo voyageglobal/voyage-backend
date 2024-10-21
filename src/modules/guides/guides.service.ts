@@ -2,13 +2,15 @@ import { Injectable, Logger } from "@nestjs/common"
 import { Prisma } from "@prisma/client"
 import { plainToClass, plainToInstance } from "class-transformer"
 import { PRISMA_ERROR_CODES } from "../common/constants"
-import { PaginationQuery } from "../common/types"
+import { PageDto } from "../common/types"
 import { getValidPageNumber, getValidPageSize } from "../common/utils/pagination"
 import { PrismaService } from "../prisma/prisma.service"
 import { DEFAULT_GUIDES_PAGE_SIZE } from "./constants"
 import { CreateGuideDto } from "./dto/create-guide.dto"
+import { GetGuidesQueryDto } from "./dto/get-guides-query.dto"
 import { GuideDto } from "./dto/guide.dto"
 import { UpdateGuideDto } from "./dto/update-guide.dto"
+import { getGuidesSearchStringFilter } from "./utils"
 
 @Injectable()
 export class GuidesService {
@@ -120,35 +122,51 @@ export class GuidesService {
     }
   }
 
-  async findAll(query: PaginationQuery): Promise<GuideDto[]> {
+  async findAll(query: GetGuidesQueryDto): Promise<PageDto<GuideDto>> {
     const pageSize = getValidPageSize({
       pageSize: query?.pageSize,
       defaultPageSize: DEFAULT_GUIDES_PAGE_SIZE,
     })
-
     const page = getValidPageNumber({
       page: query?.page,
     })
+    const orderBy = query?.orderBy
+    const orderDirection = query?.orderDirection
+    const searchStringFilter = getGuidesSearchStringFilter(query?.searchString)
 
     try {
-      const guides = await this.prismaService.guide.findMany({
-        include: {
-          primaryImages: true,
-          contentImages: true,
-          categories: true,
-          cities: true,
-          countries: true,
-        },
-        take: pageSize,
-        skip: (page - 1) * pageSize,
-        where: {
-          deleted: false,
-        },
-      })
+      const [results, total] = await this.prismaService.$transaction([
+        this.prismaService.guide.findMany({
+          include: {
+            primaryImages: true,
+            contentImages: true,
+            categories: true,
+            cities: true,
+            countries: true,
+          },
+          skip: (page - 1) * pageSize,
+          take: pageSize,
+          where: {
+            deleted: false,
+            ...searchStringFilter,
+          },
+          orderBy: {
+            [orderBy]: orderDirection,
+          },
+        }),
+        this.prismaService.guide.count({
+          where: {
+            deleted: false,
+            ...searchStringFilter,
+          },
+        }),
+      ])
 
-      const guidesDto = plainToInstance(GuideDto, guides)
+      const hasMore = total > page * pageSize
+      const guideDtos = plainToInstance(GuideDto, results)
+      const guidesPage = new PageDto<GuideDto>(guideDtos, total, page, pageSize, hasMore)
 
-      return guidesDto
+      return guidesPage
     } catch (error) {
       if (error instanceof Error) {
         this.logger.error(`Error fetching guides: ${error.message}`)
