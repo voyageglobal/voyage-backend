@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Generate branch name
-        uses: actions/github-script@v3
+        uses: actions/github-script@v7
         id: generate-branch-name
         with:
           script: |
@@ -21,7 +21,7 @@ jobs:
         run: echo "PULL_REQUEST_TITLE=${{steps.generate-branch-name.outputs.result}}" >> $GITHUB_ENV
 
       - name: Generate PR body
-        uses: actions/github-script@v3
+        uses: actions/github-script@v7
         id: generate-pr-body
         with:
           script: |
@@ -34,7 +34,7 @@ jobs:
         run: echo "PULL_REQUEST_BODY=${{steps.generate-pr-body.outputs.result}}" >> $GITHUB_ENV
       
       - name: pull-request-action
-        uses: vsoch/pull-request-action@1.1.0
+        uses: vsoch/pull-request-action@1.1.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PULL_REQUEST_BRANCH: "main"
