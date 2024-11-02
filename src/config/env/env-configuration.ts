@@ -4,7 +4,7 @@ export const DEFAULT_APP_PORT = 4000
 
 export type EnvironmentConfig = {
   app_port: number
-  app_cors_origin: string
+  app_cors_origin_list: string[]
   db: {
     host: string
     port: number
@@ -30,7 +30,7 @@ export type EnvironmentConfig = {
 export function getEnvironmentConfig(): EnvironmentConfig {
   const config: EnvironmentConfig = {
     app_port: parseInt(process.env.APP_PORT, 10) || DEFAULT_APP_PORT,
-    app_cors_origin: process.env.APP_CORS_ORIGIN,
+    app_cors_origin_list: process.env.APP_CORS_ORIGIN_LIST.split(","),
     db: {
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT_OUT, 10),
