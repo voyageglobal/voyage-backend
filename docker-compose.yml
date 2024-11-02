@@ -5,6 +5,7 @@ volumes:
   pgadmin-data:
 
 services:
+  # Docker configuration for the database
   postgres:
     container_name: voyage-postgres
     image: postgres:16-alpine
@@ -22,6 +23,7 @@ services:
     ports:
       - ${DB_PORT_OUT}:${DB_PORT}
 
+  # Docker configuration for pgAdmin
   pgadmin:
     image: dpage/pgadmin4
     platform: linux/amd64
@@ -34,6 +36,7 @@ services:
     volumes:
       - pgadmin-data:/var/lib/pgadmin
 
+  # Docker configuration for the server
   server:
     build:
       context: .
@@ -51,3 +54,13 @@ services:
         condition: service_healthy
     volumes:
       - ./logs:/app/logs
+
+  # Docker configuration for the nginx
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80
+    depends_on:
+      - server
