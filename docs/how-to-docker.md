@@ -50,6 +50,16 @@ To list all the containers, run the following command:
 $ docker ps -a
 ```
 
+To list all the existing networks, run the following command:
+```bash
+$ docker network ls
+```
+
+To create a new network, run the following command:
+```bash
+$ docker network create <NETWORK_NAME>
+```
+
 To clean up the docker system, run the following command:
 ```bash
 $ docker system prune

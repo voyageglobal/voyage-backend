@@ -1,5 +1,11 @@
 name: voyage
 
+networks:
+  # Docker network for the web application
+  web-app-network:
+    # false means that the network is not external and will be created by Docker Compose
+    external: false
+
 volumes:
   pgdata:
   pgadmin-data:
@@ -22,6 +28,8 @@ services:
       - pgdata:/var/lib/postgresql/data
     ports:
       - ${DB_PORT_OUT}:${DB_PORT}
+    networks:
+      - web-app-network # Connect the container to the network
 
   # Docker configuration for pgAdmin
   pgadmin:
@@ -29,12 +37,14 @@ services:
     platform: linux/amd64
     container_name: voyage-pgadmin
     restart: always
-    ports:
-      - ${PGADMIN_PORT}:80
     env_file:
       - .env
     volumes:
       - pgadmin-data:/var/lib/pgadmin
+    ports:
+      - ${PGADMIN_PORT}:80
+    networks:
+      - web-app-network # Connect the container to the network
 
   # Docker configuration for the server
   server:
@@ -47,20 +57,23 @@ services:
     restart: always
     env_file:
       - .env
-    ports:
-      - ${APP_PORT}:${APP_PORT}
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
       - ./logs:/app/logs
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    networks:
+      - web-app-network # Connect the container to the network
 
   # Docker configuration for the nginx
   nginx:
     image: nginx:latest
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf # Nginx configuration
     ports:
-      - 80:80
+      - "80:80" # HTTP
+      - "443:443" # HTTPS
     depends_on:
-      - server
+      - server # Wait for the server to start
