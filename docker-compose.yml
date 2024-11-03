@@ -77,3 +77,7 @@ services:
       - "443:443" # HTTPS
     depends_on:
       - server # Wait for the server to start
+    networks:
+        - web-app-network # Connect the container to the network
+    # Wait for the DNS to resolve
+    command: /bin/sh -c "sleep 5 && nginx -g 'daemon off;'"
