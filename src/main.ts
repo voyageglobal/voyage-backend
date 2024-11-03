@@ -26,8 +26,6 @@ async function bootstrap() {
     credentials: false,
   })
 
-  setupSwagger(app)
-
   app.use(cookieParser())
 
   app.useGlobalPipes(
@@ -35,6 +33,11 @@ async function bootstrap() {
       transform: true,
     }),
   )
+
+  // Set global prefix /api for all routes
+  app.setGlobalPrefix("api")
+
+  setupSwagger(app)
 
   await app.listen(appPort, () => {
     console.log(`Server is running on ${appPort} port!`)
@@ -48,7 +51,12 @@ function setupSwagger(app: INestApplication) {
 
   const swaggerConfig = generateSwaggerConfig()
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig)
-  SwaggerModule.setup(SWAGGER_API_URL, app, swaggerDocument)
+  SwaggerModule.setup(SWAGGER_API_URL, app, swaggerDocument, {
+    // NOTE: Disable global prefix for Swagger UI
+    // To have paths like /api/guide-categories, /api/guides, etc.
+    // and documentation paths like /api/docs
+    useGlobalPrefix: false,
+  })
 }
 
 bootstrap()
