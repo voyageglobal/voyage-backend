@@ -6,6 +6,7 @@ export function getGuideCategoryMock(overrides: Partial<GuideCategory> = {}): Gu
     key: "nature",
     name: "Nature",
     imageUrl: "https://example.com/explore-city.png",
+    iconName: "nature",
     guides: [],
     deleted: false,
     createdAt: new Date("2021-01-01T00:00:00Z"),
@@ -18,6 +19,7 @@ export function getGuideCategoryDtoMock(overrides: Partial<GuideCategoryDto> = {
   return {
     key: "nature",
     name: "Nature",
+    iconName: "nature",
     imageUrl: "https://example.com/explore-city.png",
     ...overrides,
   }
