@@ -28,6 +28,14 @@ export class GuideCategoryDto extends PickType(GuideCategory, ["key", "name", "i
   imageUrl: string
 
   @ApiProperty({
+    type: String,
+    description: "The icon name of the guide category",
+    example: "explore-city",
+    required: true,
+  })
+  iconName: string
+
+  @ApiProperty({
     type: Boolean,
     description: "Whether the guide category is deleted",
     example: false,

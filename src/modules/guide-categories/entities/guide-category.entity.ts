@@ -16,6 +16,10 @@ export class GuideCategory {
   @IsNotEmpty()
   imageUrl: string
 
+  @IsString()
+  @IsNotEmpty()
+  iconName: string
+
   @Type(() => Guide)
   guides: Guide[]
 

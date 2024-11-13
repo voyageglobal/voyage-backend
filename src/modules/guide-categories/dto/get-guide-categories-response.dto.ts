@@ -12,11 +12,13 @@ export class GetGuideCategoriesResponseDto implements ApiResponse<GuideCategoryD
         key: "nature",
         name: "Nature",
         imageUrl: "https://example.com/nature.jpg",
+        iconName: "nature",
       },
       {
         key: "sightseeing",
         name: "Sightseeing",
         imageUrl: "https://example.com/sightseeing.jpg",
+        iconName: "sightseeing",
       },
     ],
   })
