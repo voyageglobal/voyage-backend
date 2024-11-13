@@ -27,6 +27,7 @@ Table GuideCategory {
   key String [pk]
   name String [not null]
   imageUrl String [not null]
+  iconName String [not null, default: '']
   guides Guide [not null]
   deleted Boolean [not null, default: false]
   updatedAt DateTime [not null]
