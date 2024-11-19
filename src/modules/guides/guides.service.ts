@@ -10,7 +10,7 @@ import { CreateGuideDto } from "./dto/create-guide.dto"
 import { GetGuidesQueryDto } from "./dto/get-guides-query.dto"
 import { GuideDto } from "./dto/guide.dto"
 import { UpdateGuideDto } from "./dto/update-guide.dto"
-import { getGuidesSearchStringFilter } from "./utils"
+import { buildGuideCategoriesFilter, buildGuidesSearchStringFilter } from "./filters"
 
 @Injectable()
 export class GuidesService {
@@ -132,7 +132,8 @@ export class GuidesService {
     })
     const orderBy = query?.orderBy
     const orderDirection = query?.orderDirection
-    const searchStringFilter = getGuidesSearchStringFilter(query?.searchString)
+    const searchStringFilter = buildGuidesSearchStringFilter(query?.searchString)
+    const guideCategoriesFilter = buildGuideCategoriesFilter(query?.guideCategories)
 
     try {
       const [results, total] = await this.prismaService.$transaction([
@@ -148,6 +149,7 @@ export class GuidesService {
           take: pageSize,
           where: {
             deleted: false,
+            ...guideCategoriesFilter,
             ...searchStringFilter,
           },
           orderBy: {
@@ -157,6 +159,7 @@ export class GuidesService {
         this.prismaService.guide.count({
           where: {
             deleted: false,
+            ...guideCategoriesFilter,
             ...searchStringFilter,
           },
         }),

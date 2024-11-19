@@ -13,11 +13,13 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from "@nestjs/swagger"
+import { plainToInstance } from "class-transformer"
 import { JwtAuthGuard } from "../auth/jwt-auth-guard"
 import { CreateGuideResponseDto } from "./dto/create-guide-response.dto"
 import { CreateGuideDto } from "./dto/create-guide.dto"
 import { GetGuideResponseDto } from "./dto/get-guide-response.dto"
 import { GetGuidesQueryDto } from "./dto/get-guides-query.dto"
+import { GetGuidesRequestQueryDto } from "./dto/get-guides-request-query.dto"
 import { GetGuidesResponseDto } from "./dto/get-guides-response.dto"
 import { GuideDto } from "./dto/guide.dto"
 import { RemoveGuideResponseDto } from "./dto/remove-guide-response.dto"
@@ -86,7 +88,9 @@ export class GuidesController {
   }
 
   @Get()
-  @ApiOperation({ summary: "Get guides by query" })
+  @ApiOperation({
+    summary: "Get guides by query",
+  })
   @ApiQuery({ name: "page", type: Number, required: false, example: 1, description: "The page number" })
   @ApiQuery({ name: "pageSize", type: Number, required: false, example: 10, description: "The page size" })
   @ApiQuery({
@@ -111,6 +115,13 @@ export class GuidesController {
     example: "Paris",
     description: "Search string",
   })
+  @ApiQuery({
+    name: "guideCategories",
+    type: String,
+    required: false,
+    example: "nature,history",
+    description: "The filter by guide categories by comma separated values",
+  })
   @ApiOkResponse({
     description: "The guides have been successfully retrieved.",
     type: GetGuidesResponseDto,
@@ -130,10 +141,12 @@ export class GuidesController {
         },
       }),
     )
-    paginationQuery: GetGuidesQueryDto,
+    paginationQuery: GetGuidesRequestQueryDto,
   ): Promise<GetGuidesResponseDto> {
     try {
-      const page = await this.guidesService.findAll(paginationQuery)
+      const guidesQuery = plainToInstance(GetGuidesQueryDto, paginationQuery)
+
+      const page = await this.guidesService.findAll(guidesQuery)
 
       return {
         data: page,
