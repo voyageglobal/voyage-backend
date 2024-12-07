@@ -1,4 +1,6 @@
 import { Prisma } from "@prisma/client"
+import { DEFAULT_FILTER_OUTPUT } from "./constants"
+import { isValidFilterInput } from "./utils"
 
 /**
  * Returns the search string filter object for the guides query
@@ -9,8 +11,8 @@ import { Prisma } from "@prisma/client"
 export function buildGuidesSearchStringFilter(
   searchString: string | null | undefined,
 ): Prisma.GuideFindManyArgs["where"] {
-  if (!searchString) {
-    return {}
+  if (!isValidFilterInput(searchString)) {
+    return DEFAULT_FILTER_OUTPUT
   }
 
   return {
@@ -44,12 +46,8 @@ export function buildGuidesSearchStringFilter(
 export function buildGuideCategoriesFilter(
   categoryKeys: string[] | null | undefined,
 ): Prisma.GuideFindManyArgs["where"] {
-  if (!categoryKeys) {
-    return {}
-  }
-
-  if (categoryKeys.length === 0) {
-    return {}
+  if (!isValidFilterInput(categoryKeys)) {
+    return DEFAULT_FILTER_OUTPUT
   }
 
   return {
@@ -57,6 +55,50 @@ export function buildGuideCategoriesFilter(
       some: {
         key: {
           in: categoryKeys,
+        },
+      },
+    },
+  }
+}
+
+/**
+ * Returns the filter object for the guides query
+ * Filters by cities
+ * @param ids - The cities ids
+ * @returns The filter object for the guides query
+ */
+export function buildGuideCitiesFilter(ids: string[]): Prisma.GuideFindManyArgs["where"] {
+  if (!isValidFilterInput(ids)) {
+    return DEFAULT_FILTER_OUTPUT
+  }
+
+  return {
+    cities: {
+      some: {
+        id: {
+          in: ids,
+        },
+      },
+    },
+  }
+}
+
+/**
+ * Returns the filter object for the guides query
+ * Filters by countries
+ * @param ids - The countries ids
+ * @returns The filter object for the guides query
+ */
+export function buildGuideCountriesFilter(ids: string[]): Prisma.GuideFindManyArgs["where"] {
+  if (!isValidFilterInput(ids)) {
+    return DEFAULT_FILTER_OUTPUT
+  }
+
+  return {
+    countries: {
+      some: {
+        id: {
+          in: ids,
         },
       },
     },
