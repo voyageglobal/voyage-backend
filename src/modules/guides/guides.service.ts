@@ -10,7 +10,7 @@ import { CreateGuideDto } from "./dto/create-guide.dto"
 import { GetGuidesQueryDto } from "./dto/get-guides-query.dto"
 import { GuideDto } from "./dto/guide.dto"
 import { UpdateGuideDto } from "./dto/update-guide.dto"
-import { getGuidesSearchStringFilter } from "./utils"
+import { GuideFiltersBuilder } from "./filters"
 
 @Injectable()
 export class GuidesService {
@@ -132,7 +132,15 @@ export class GuidesService {
     })
     const orderBy = query?.orderBy
     const orderDirection = query?.orderDirection
-    const searchStringFilter = getGuidesSearchStringFilter(query?.searchString)
+
+    const filtersBuilder = new GuideFiltersBuilder()
+    const filters: Prisma.GuideFindManyArgs["where"] = filtersBuilder
+      .addDeletedFilter(false)
+      .addCategoriesFilter(query?.guideCategories)
+      .addCitiesFilter([query?.city])
+      .addCountriesFilter([query?.country])
+      .addSearchStringFilter(query?.searchString)
+      .build()
 
     try {
       const [results, total] = await this.prismaService.$transaction([
@@ -144,20 +152,18 @@ export class GuidesService {
             cities: true,
             countries: true,
           },
+          where: {
+            ...filters,
+          },
           skip: (page - 1) * pageSize,
           take: pageSize,
-          where: {
-            deleted: false,
-            ...searchStringFilter,
-          },
           orderBy: {
             [orderBy]: orderDirection,
           },
         }),
         this.prismaService.guide.count({
           where: {
-            deleted: false,
-            ...searchStringFilter,
+            ...filters,
           },
         }),
       ])
