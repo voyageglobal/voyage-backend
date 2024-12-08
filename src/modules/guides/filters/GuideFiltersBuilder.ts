@@ -10,7 +10,9 @@ import {
 export class GuideFiltersBuilder {
   private filtersOutput: Prisma.GuideFindManyArgs["where"] = DEFAULT_FILTER_OUTPUT
 
-  constructor() {
+  constructor(initialFilters: Prisma.GuideFindManyArgs["where"] = DEFAULT_FILTER_OUTPUT) {
+    this.filtersOutput = initialFilters
+
     return this
   }
 
