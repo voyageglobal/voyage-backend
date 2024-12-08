@@ -1,6 +1,7 @@
-import { CacheModule } from "@nestjs/cache-manager"
+import { CacheInterceptor, CacheModule } from "@nestjs/cache-manager"
 import { Logger, Module, ModuleMetadata } from "@nestjs/common"
 import { ConfigModule } from "@nestjs/config"
+import { APP_INTERCEPTOR } from "@nestjs/core"
 import { AuthModule } from "../auth/auth.module"
 import { CitiesModule } from "../cities/cities.module"
 import { CountriesModule } from "../countries/countries.module"
@@ -21,7 +22,9 @@ const CONFIG_MODULES: ModuleImports = [
     load: [getEnvironmentConfig],
     expandVariables: true,
   }),
-  CacheModule.register(),
+  CacheModule.register({
+    isGlobal: true,
+  }),
 ]
 
 const API_MODULES: ModuleImports = [
@@ -39,6 +42,13 @@ const API_MODULES: ModuleImports = [
 @Module({
   imports: [...CONFIG_MODULES, ...API_MODULES],
   controllers: [AppController],
-  providers: [AppService, Logger],
+  providers: [
+    AppService,
+    Logger,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: CacheInterceptor,
+    },
+  ],
 })
 export class AppModule {}
