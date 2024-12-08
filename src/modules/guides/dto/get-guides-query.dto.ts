@@ -34,4 +34,14 @@ export class GetGuidesQueryDto implements PaginationQuery {
   @IsOptional()
   @Transform(({ value }) => transformCommaSeparatedStringToArray(value))
   guideCategories?: string[]
+
+  @IsString()
+  @IsOptional()
+  @Type(() => String)
+  country?: string
+
+  @IsString()
+  @IsOptional()
+  @Type(() => String)
+  city?: string
 }

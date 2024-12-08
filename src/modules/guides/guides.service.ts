@@ -137,10 +137,8 @@ export class GuidesService {
     const filters: Prisma.GuideFindManyArgs["where"] = filtersBuilder
       .addDeletedFilter(false)
       .addCategoriesFilter(query?.guideCategories)
-      // TODO: Fill with cities from the query
-      .addCitiesFilter([])
-      // TODO: Fill with countries from the query
-      .addCountriesFilter([])
+      .addCitiesFilter([query?.city])
+      .addCountriesFilter([query?.country])
       .addSearchStringFilter(query?.searchString)
       .build()
 
@@ -154,11 +152,11 @@ export class GuidesService {
             cities: true,
             countries: true,
           },
-          skip: (page - 1) * pageSize,
-          take: pageSize,
           where: {
             ...filters,
           },
+          skip: (page - 1) * pageSize,
+          take: pageSize,
           orderBy: {
             [orderBy]: orderDirection,
           },

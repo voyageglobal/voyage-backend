@@ -122,6 +122,20 @@ export class GuidesController {
     example: "nature,history",
     description: "The filter by guide categories by comma separated values",
   })
+  @ApiQuery({
+    name: "city",
+    type: String,
+    required: false,
+    example: "8eaa2524-53cc-4f02-a78b-f04c984ab8de",
+    description: "The filter by city",
+  })
+  @ApiQuery({
+    name: "country",
+    type: String,
+    required: false,
+    example: "8eaa2524-53cc-4f02-a78b-f04c984ab8de",
+    description: "The filter by country",
+  })
   @ApiOkResponse({
     description: "The guides have been successfully retrieved.",
     type: GetGuidesResponseDto,

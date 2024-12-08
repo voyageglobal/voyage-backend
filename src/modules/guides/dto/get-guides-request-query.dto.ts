@@ -64,4 +64,24 @@ export class GetGuidesRequestQueryDto implements PaginationQuery {
   @IsOptional()
   @Type(() => String)
   guideCategories?: string
+
+  @ApiProperty({
+    description: "Country id",
+    required: false,
+    default: "8eaa2524-53cc-4f02-a78b-f04c984ab8de",
+  })
+  @IsString()
+  @IsOptional()
+  @Type(() => String)
+  country?: string
+
+  @ApiProperty({
+    description: "City id",
+    required: false,
+    default: "8eaa2524-53cc-4f02-a78b-f04c984ab8de",
+  })
+  @IsString()
+  @IsOptional()
+  @Type(() => String)
+  city?: string
 }

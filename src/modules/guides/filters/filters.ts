@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client"
+import { sift } from "radash"
 import { DEFAULT_FILTER_OUTPUT } from "./constants"
 import { isValidFilterInput } from "./utils"
 
@@ -46,7 +47,7 @@ export function buildGuidesSearchStringFilter(
 export function buildGuideCategoriesFilter(
   categoryKeys: string[] | null | undefined,
 ): Prisma.GuideFindManyArgs["where"] {
-  if (!isValidFilterInput(categoryKeys)) {
+  if (!isValidFilterInput(sift(categoryKeys))) {
     return DEFAULT_FILTER_OUTPUT
   }
 
@@ -68,7 +69,7 @@ export function buildGuideCategoriesFilter(
  * @returns The filter object for the guides query
  */
 export function buildGuideCitiesFilter(ids: string[]): Prisma.GuideFindManyArgs["where"] {
-  if (!isValidFilterInput(ids)) {
+  if (!isValidFilterInput(sift(ids))) {
     return DEFAULT_FILTER_OUTPUT
   }
 
@@ -90,7 +91,7 @@ export function buildGuideCitiesFilter(ids: string[]): Prisma.GuideFindManyArgs[
  * @returns The filter object for the guides query
  */
 export function buildGuideCountriesFilter(ids: string[]): Prisma.GuideFindManyArgs["where"] {
-  if (!isValidFilterInput(ids)) {
+  if (!isValidFilterInput(sift(ids))) {
     return DEFAULT_FILTER_OUTPUT
   }
 
