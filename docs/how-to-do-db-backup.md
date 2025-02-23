@@ -1,4 +1,24 @@
+### How to make a backup of the PostgreSQL database
+
+The backup is made by the following command:
+
+```bash
+pg_dump "postgresql://test_user:test_password@localhost:5432/test_db" > db_dump.sql
+```
+
+To make a backup without the owner and privileges, you need to use the following command:
+
+```bash
+pg_dump  --no-owner --no-privileges --clean --if-exists --quote-all-identifiers "postgresql://test_user:test_password@localhost:5432/test_db" > db_dump.sql
+```
+
 ### How to restore backup to the PostgreSQL database
+
+The restore is made by the following command:
+
+```bash
+psql "postgresql://test_user:test_password@localhost:5432/test_db" < db_dump.sql
+```
 
 Connect to the remote database
 
