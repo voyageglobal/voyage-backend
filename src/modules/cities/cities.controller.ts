@@ -61,6 +61,15 @@ export class CitiesController {
     example: "Paris",
     description: "Search string",
   })
+  @ApiQuery({
+    name: "countries",
+    required: false,
+    type: String,
+    example: "123e4567-e89b-12d3-a456-426614174000,123e4567-e89b-12d3-a456-426614174001",
+    description: "List of country ids separated by comma",
+    style: "simple",
+    explode: false,
+  })
   @ApiOkResponse({
     type: GetCitiesResponseDto,
     description: "Cities have been successfully received.",

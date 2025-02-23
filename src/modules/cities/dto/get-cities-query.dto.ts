@@ -1,6 +1,7 @@
 import { Transform, Type } from "class-transformer"
-import { IsBoolean, IsEnum, IsInt, IsOptional, IsString } from "class-validator"
-import { PaginationQuery } from "../../common/types"
+import { IsArray, IsBoolean, IsEnum, IsInt, IsOptional, IsString } from "class-validator"
+import { type PaginationQuery } from "../../common/types"
+import { transformCommaSeparatedStringToArray } from "../../common/utils/api-query/transform-string-to-array"
 
 export enum CitiesSortOrder {
   POPULARITY_ASC = "POPULARITY_ASC",
@@ -38,4 +39,10 @@ export class GetCitiesQueryDto implements PaginationQuery {
     return false
   })
   onlyWithGuides?: boolean
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  @Transform(({ value }) => transformCommaSeparatedStringToArray(value))
+  countries?: string[]
 }

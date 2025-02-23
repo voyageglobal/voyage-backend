@@ -1,4 +1,4 @@
-import { getCitiesQueryOrderBy, getSearchStringFilter } from "./utils"
+import { getCitiesQueryOrderBy, getSearchStringFilter, getFilterByCountries, getFilterOnlyWithGuides } from "./utils"
 import { CitiesSortOrder } from "./dto/get-cities-query.dto"
 
 describe("Cities service utils", () => {
@@ -55,6 +55,35 @@ describe("Cities service utils", () => {
           },
         ],
       })
+    })
+  })
+
+  describe("getFilterByCountries function", () => {
+    it("should return empty object if countries are not provided", () => {
+      const result = getFilterByCountries(null)
+      expect(result).toEqual({})
+    })
+
+    it("should return 'where' filter if countries are provided", () => {
+      const result = getFilterByCountries(["1", "2", "3"])
+      expect(result).toEqual({ countryId: { in: ["1", "2", "3"] } })
+    })
+  })
+
+  describe("getFilterOnlyWithGuides function", () => {
+    it("should return empty object if onlyWithGuides is not provided", () => {
+      const result = getFilterOnlyWithGuides(null)
+      expect(result).toEqual({})
+    })
+
+    it("should return 'where' filter if onlyWithGuides is true", () => {
+      const result = getFilterOnlyWithGuides(true)
+      expect(result).toEqual({ guides: { some: { deleted: false } } })
+    })
+
+    it("should return empty object if onlyWithGuides is false", () => {
+      const result = getFilterOnlyWithGuides(false)
+      expect(result).toEqual({})
     })
   })
 })
