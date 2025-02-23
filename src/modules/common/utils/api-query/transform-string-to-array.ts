@@ -8,6 +8,12 @@ const commaSeparatedStringToArrayTransformer = chain(
 )
 
 export function transformCommaSeparatedStringToArray(commaSeparatedString: string): string[] {
+  if (!commaSeparatedString) return []
+
+  const isArray = Array.isArray(commaSeparatedString)
+
+  if (isArray) return commaSeparatedString
+
   const array = commaSeparatedStringToArrayTransformer(commaSeparatedString)
 
   return array

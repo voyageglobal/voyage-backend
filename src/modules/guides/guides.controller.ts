@@ -120,6 +120,8 @@ export class GuidesController {
     type: String,
     required: false,
     example: "nature,history",
+    style: "simple",
+    explode: false,
     description: "The filter by guide categories by comma separated values",
   })
   @ApiQuery({

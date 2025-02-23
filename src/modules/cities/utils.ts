@@ -46,3 +46,25 @@ export function getSearchStringFilter(searchString: string | null | undefined): 
       }
     : {}
 }
+
+export function getFilterByCountries(countries: string[] | null | undefined): Prisma.CityFindManyArgs["where"] {
+  return countries
+    ? {
+        countryId: {
+          in: countries,
+        },
+      }
+    : {}
+}
+
+export function getFilterOnlyWithGuides(onlyWithGuides: boolean | null | undefined): Prisma.CityFindManyArgs["where"] {
+  return onlyWithGuides
+    ? {
+        guides: {
+          some: {
+            deleted: false,
+          },
+        },
+      }
+    : {}
+}
