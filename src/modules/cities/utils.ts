@@ -25,26 +25,18 @@ export function getCitiesQueryOrderBy(sortOrder: CitiesSortOrder | null): Prisma
 }
 
 export function getSearchStringFilter(searchString: string | null | undefined): Prisma.CityFindManyArgs["where"] {
-  return searchString
-    ? {
-        OR: [
-          {
-            name: {
-              startsWith: searchString,
-              mode: "insensitive",
-            },
-          },
-          {
-            country: {
-              name: {
-                startsWith: searchString,
-                mode: "insensitive",
-              },
-            },
-          },
-        ],
-      }
-    : {}
+  if (!searchString) return {}
+
+  return {
+    OR: [
+      {
+        name: {
+          startsWith: searchString,
+          mode: "insensitive",
+        },
+      },
+    ],
+  }
 }
 
 export function getFilterByCountries(countries: string[] | null | undefined): Prisma.CityFindManyArgs["where"] {

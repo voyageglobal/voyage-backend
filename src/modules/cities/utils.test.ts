@@ -45,14 +45,6 @@ describe("Cities service utils", () => {
               mode: "insensitive",
             },
           },
-          {
-            country: {
-              name: {
-                startsWith: "test",
-                mode: "insensitive",
-              },
-            },
-          },
         ],
       })
     })

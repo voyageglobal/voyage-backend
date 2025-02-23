@@ -10,7 +10,7 @@ import {
   ApiTags,
 } from "@nestjs/swagger"
 import { CountriesService } from "./countries.service"
-import { GetCountriesQueryDto } from "./dto/get-countries-query.dto"
+import { CountriesSortOrder, GetCountriesQueryDto } from "./dto/get-countries-query.dto"
 import { GetCountriesResponseDto } from "./dto/get-countries-response.dto"
 import { GetCountryResponseDto } from "./dto/get-country-response.dto"
 
@@ -35,6 +35,19 @@ export class CountriesController {
     example: 1,
     description: "Page number",
   })
+  @ApiQuery({
+    name: "sortOrder",
+    required: false,
+    enum: [CountriesSortOrder.NAME_ASC, CountriesSortOrder.NAME_DESC],
+    description: "Sort order",
+  })
+  @ApiQuery({
+    name: "searchString",
+    required: false,
+    type: String,
+    example: "France",
+    description: "Search string",
+  })
   @ApiOkResponse({
     description: "Countries have been successfully received.",
     type: GetCountriesResponseDto,
@@ -55,10 +68,10 @@ export class CountriesController {
     paginationQuery: GetCountriesQueryDto,
   ): Promise<GetCountriesResponseDto> {
     try {
-      const result = await this.countriesService.findAll(paginationQuery)
+      const page = await this.countriesService.findAll(paginationQuery)
 
       return {
-        data: result,
+        data: page,
         errors: null,
       }
     } catch (error) {
