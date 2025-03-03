@@ -4,6 +4,8 @@ import { prismaMock, PrismaClientMock } from "../../test-utils/prisma"
 import { MockedLogger } from "../../test-utils/providers"
 import { PrismaService } from "../prisma/prisma.service"
 import { GuideCategoriesService } from "./guide-categories.service"
+import { CacheModule } from "@nestjs/cache-manager"
+import { PrismaModule } from "../prisma/prisma.module"
 
 describe("GuideCategoriesService", () => {
   let service: GuideCategoriesService
@@ -11,6 +13,7 @@ describe("GuideCategoriesService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [PrismaModule, CacheModule.register()],
       providers: [GuideCategoriesService, PrismaService, MockedLogger],
     })
       .overrideProvider(PrismaService)

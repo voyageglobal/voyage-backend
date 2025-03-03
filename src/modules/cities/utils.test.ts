@@ -38,14 +38,10 @@ describe("Cities service utils", () => {
     it("should return 'where' filter if search is provided", () => {
       const result = getSearchStringFilter("test")
       expect(result).toEqual({
-        OR: [
-          {
-            name: {
-              startsWith: "test",
-              mode: "insensitive",
-            },
-          },
-        ],
+        name: {
+          startsWith: "test",
+          mode: "insensitive",
+        },
       })
     })
   })

@@ -28,35 +28,31 @@ export function getSearchStringFilter(searchString: string | null | undefined): 
   if (!searchString) return {}
 
   return {
-    OR: [
-      {
-        name: {
-          startsWith: searchString,
-          mode: "insensitive",
-        },
-      },
-    ],
+    name: {
+      startsWith: searchString,
+      mode: "insensitive",
+    },
   }
 }
 
 export function getFilterByCountries(countries: string[] | null | undefined): Prisma.CityFindManyArgs["where"] {
-  return countries
-    ? {
-        countryId: {
-          in: countries,
-        },
-      }
-    : {}
+  if (!countries) return {}
+
+  return {
+    countryId: {
+      in: countries,
+    },
+  }
 }
 
 export function getFilterOnlyWithGuides(onlyWithGuides: boolean | null | undefined): Prisma.CityFindManyArgs["where"] {
-  return onlyWithGuides
-    ? {
-        guides: {
-          some: {
-            deleted: false,
-          },
-        },
-      }
-    : {}
+  if (!onlyWithGuides) return {}
+
+  return {
+    guides: {
+      some: {
+        deleted: false,
+      },
+    },
+  }
 }
