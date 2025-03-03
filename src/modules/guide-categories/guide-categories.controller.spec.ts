@@ -4,6 +4,7 @@ import { MockedLogger } from "../../test-utils/providers"
 import { PrismaModule } from "../prisma/prisma.module"
 import { GuideCategoriesController } from "./guide-categories.controller"
 import { GuideCategoriesService } from "./guide-categories.service"
+import { CacheModule } from "@nestjs/cache-manager"
 
 describe("GuideCategoriesController", () => {
   let controller: GuideCategoriesController
@@ -11,7 +12,7 @@ describe("GuideCategoriesController", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [PrismaModule],
+      imports: [PrismaModule, CacheModule.register()],
       controllers: [GuideCategoriesController],
       providers: [GuideCategoriesService, MockedLogger],
     }).compile()

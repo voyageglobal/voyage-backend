@@ -6,6 +6,7 @@ import { PrismaModule } from "../prisma/prisma.module"
 import { PrismaService } from "../prisma/prisma.service"
 import { CitiesService } from "./cities.service"
 import { CitiesSortOrder } from "./dto/get-cities-query.dto"
+import { CacheModule } from "@nestjs/cache-manager"
 
 describe("CitiesService", () => {
   let service: CitiesService
@@ -13,7 +14,7 @@ describe("CitiesService", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [PrismaModule],
+      imports: [PrismaModule, CacheModule.register()],
       providers: [CitiesService, PrismaService, MockedLogger],
     })
       .overrideProvider(PrismaService)

@@ -14,6 +14,7 @@ import { AppController } from "./app.controller"
 import { AppService } from "./app.service"
 import { getEnvironmentConfig } from "../../config/env/env-configuration"
 import { HealthCheckModule } from "../health-check/health-check.module"
+import { SearchModule } from "../search/search.module"
 
 type ModuleImports = ModuleMetadata["imports"]
 
@@ -37,6 +38,7 @@ const API_MODULES: ModuleImports = [
   AuthModule,
   UsersModule,
   StatsModule,
+  SearchModule,
 ]
 
 @Module({

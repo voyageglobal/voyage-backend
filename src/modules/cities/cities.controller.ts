@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Param, Query, ValidationPipe } from "@nestjs/common"
+import { Controller, Get, NotFoundException, Param, Query, UseInterceptors, ValidationPipe } from "@nestjs/common"
 import {
   ApiBadRequestResponse,
   ApiInternalServerErrorResponse,
@@ -13,9 +13,12 @@ import { CitiesService } from "./cities.service"
 import { CitiesSortOrder, GetCitiesQueryDto } from "./dto/get-cities-query.dto"
 import { GetCitiesResponseDto } from "./dto/get-cities-response.dto"
 import { GetCityResponseDto } from "./dto/get-city-response.dto"
+import { CacheInterceptor, CacheTTL } from "@nestjs/cache-manager"
 
 @ApiTags("cities")
 @Controller("cities")
+@UseInterceptors(CacheInterceptor)
+@CacheTTL(5)
 export class CitiesController {
   constructor(private readonly citiesService: CitiesService) {}
 

@@ -9,6 +9,7 @@ import { CitiesService } from "./cities.service"
 import { CityDto } from "./dto/city.dto"
 import { CitiesSortOrder } from "./dto/get-cities-query.dto"
 import { GetCityResponseDto } from "./dto/get-city-response.dto"
+import { CacheModule } from "@nestjs/cache-manager"
 
 describe("CitiesController", () => {
   let controller: CitiesController
@@ -16,7 +17,7 @@ describe("CitiesController", () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [PrismaModule],
+      imports: [PrismaModule, CacheModule.register()],
       controllers: [CitiesController],
       providers: [CitiesService, MockedLogger],
     }).compile()

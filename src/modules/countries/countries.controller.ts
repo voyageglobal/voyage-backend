@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Param, Query, ValidationPipe } from "@nestjs/common"
+import { Controller, Get, NotFoundException, Param, Query, UseInterceptors, ValidationPipe } from "@nestjs/common"
 import {
   ApiBadRequestResponse,
   ApiInternalServerErrorResponse,
@@ -13,9 +13,12 @@ import { CountriesService } from "./countries.service"
 import { CountriesSortOrder, GetCountriesQueryDto } from "./dto/get-countries-query.dto"
 import { GetCountriesResponseDto } from "./dto/get-countries-response.dto"
 import { GetCountryResponseDto } from "./dto/get-country-response.dto"
+import { CacheInterceptor, CacheTTL } from "@nestjs/cache-manager"
 
 @ApiTags("countries")
 @Controller("countries")
+@UseInterceptors(CacheInterceptor)
+@CacheTTL(5)
 export class CountriesController {
   constructor(private readonly countriesService: CountriesService) {}
 

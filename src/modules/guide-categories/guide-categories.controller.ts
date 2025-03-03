@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nestjs/common"
+import { Controller, Get, UseInterceptors } from "@nestjs/common"
 import {
   ApiBadRequestResponse,
   ApiInternalServerErrorResponse,
@@ -8,9 +8,12 @@ import {
 } from "@nestjs/swagger"
 import { GetGuideCategoriesResponseDto } from "./dto/get-guide-categories-response.dto"
 import { GuideCategoriesService } from "./guide-categories.service"
+import { CacheInterceptor, CacheTTL } from "@nestjs/cache-manager"
 
 @ApiTags("guide-categories")
 @Controller("guide-categories")
+@UseInterceptors(CacheInterceptor)
+@CacheTTL(5)
 export class GuideCategoriesController {
   constructor(private readonly guideCategoriesService: GuideCategoriesService) {}
 
