@@ -10,6 +10,7 @@ import {
 import { GetSearchCitiesResponseDto } from "./dto/get-search-cities-response.dto"
 import { SearchService } from "./search.service"
 import { GetSearchCitiesQueryDto } from "./dto/get-search-cities-query.dto"
+import { CitiesSortOrder } from "../cities/dto/get-cities-query.dto"
 
 @ApiTags("search")
 @Controller("search")
@@ -34,10 +35,28 @@ export class SearchController {
   })
   @ApiQuery({
     name: "searchString",
-    required: false,
+    required: true,
     type: String,
     example: "Paris",
     description: "Search string",
+  })
+  @ApiQuery({
+    name: "onlyWithGuides",
+    required: false,
+    type: Boolean,
+    example: true,
+    description: "Only with guides",
+  })
+  @ApiQuery({
+    name: "sortOrder",
+    required: false,
+    enum: [
+      CitiesSortOrder.POPULARITY_ASC,
+      CitiesSortOrder.POPULARITY_DESC,
+      CitiesSortOrder.NAME_ASC,
+      CitiesSortOrder.NAME_DESC,
+    ],
+    description: "Sort order",
   })
   @ApiOkResponse({
     type: GetSearchCitiesResponseDto,

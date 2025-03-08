@@ -1,6 +1,7 @@
-import { IsInt, IsString } from "class-validator"
+import { IsBoolean, IsEnum, IsInt, IsOptional, IsString } from "class-validator"
 import { PaginationQuery } from "../../common/types"
-import { Type } from "class-transformer"
+import { Transform, Type } from "class-transformer"
+import { CitiesSortOrder } from "src/modules/cities/dto/get-cities-query.dto"
 
 export class GetSearchCitiesQueryDto implements PaginationQuery {
   @IsString()
@@ -13,4 +14,20 @@ export class GetSearchCitiesQueryDto implements PaginationQuery {
   @IsInt()
   @Type(() => Number)
   pageSize: number
+
+  @IsBoolean()
+  @IsOptional()
+  @Transform(({ value }: { value: string }) => {
+    if (typeof value === "boolean") return value
+    if (typeof value === "string") return value === "true"
+
+    return false
+  })
+  onlyWithGuides?: boolean
+
+  @IsString()
+  @IsEnum(CitiesSortOrder)
+  @IsOptional()
+  @Type(() => String)
+  sortOrder?: CitiesSortOrder = CitiesSortOrder.NAME_ASC
 }
