@@ -35,7 +35,7 @@ export class SearchController {
   })
   @ApiQuery({
     name: "searchString",
-    required: true,
+    required: false,
     type: String,
     example: "Paris",
     description: "Search string",
