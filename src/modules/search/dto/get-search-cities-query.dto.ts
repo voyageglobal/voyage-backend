@@ -5,7 +5,8 @@ import { CitiesSortOrder } from "src/modules/cities/dto/get-cities-query.dto"
 
 export class GetSearchCitiesQueryDto implements PaginationQuery {
   @IsString()
-  searchString: string
+  @IsOptional()
+  searchString?: string
 
   @IsInt()
   @Type(() => Number)

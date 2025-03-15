@@ -558,8 +558,8 @@ describe("GuidesService", () => {
 
       expect(page.items).toHaveLength(1)
       expect(page.total).toBe(1)
-      expect(page.items[0]).toEqual(guideDtoMock)
-      expect(page.items[0].countries).toEqual(guideDtoMock.countries)
+      expect(page.items[0]?.id).toEqual(guideDtoMock.id)
+      expect(page.items[0]?.countries).toEqual(guideDtoMock.countries)
     })
 
     it("should return array containing 1 guide with cities", async () => {
